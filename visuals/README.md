@@ -1,11 +1,5 @@
-# Visuals
+# Visual assets
 
-در Patchهای بعدی، این پوشه شامل کدهای تولید:
-- نقشه‌های مکانیکی،
-- دیاگرام نیرو،
-- نمودارهای پایداری،
-- انیمیشن مأموریت،
-- ویدئوی MP4،
-- و داشبوردهای تحلیلی
+This folder is reserved for reusable visualization utilities and documentation assets.
 
-خواهد بود.
+Generated figures, GIF files and MP4 files are written to `outputs/` during the rebuild and are not committed to Git.

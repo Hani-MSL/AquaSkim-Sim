@@ -1,29 +1,15 @@
-# Final Report Generator
+# Report workflow
 
-## Main output
+The final Word report is generated automatically by the public rebuild workflow:
 
-The final report is generated from validated Phase 02--09 outputs:
+```bat
+scripts\run_from_zero_to_delivery.bat
+```
+
+The generated DOCX is written to:
 
 ```text
-outputs/reports/AquaSkim-Sim_Final_Report.docx
+outputs\reports\AquaSkim-Sim_Final_Report.docx
 ```
 
-## One-command build
-
-```bat
-scripts\run_patch_10.bat
-```
-
-## Full project rebuild from a clean machine
-
-```bat
-scripts\bootstrap_and_build.bat
-```
-
-## Cover-page fields
-
-Before final submission, edit `config/report_metadata.json` with the student's name, student ID, course, instructor, institution and semester. Then run the report build again.
-
-## Evidence
-
-The final report build stores a report manifest, final submission manifest, SHA-256 checksums, execution transcript, environment snapshot, artifact snapshot and Phase 10 handoff.
+The report is intentionally generated in English. Optional personal/course metadata can be supplied locally through `config/report_metadata.json`, which is ignored by Git.
