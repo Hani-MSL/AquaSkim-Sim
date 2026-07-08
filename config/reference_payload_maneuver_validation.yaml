@@ -1,0 +1,75 @@
+reference_payload_maneuver_validation:
+  identifier: AQUASKIM-REF-PAYMAN-01
+  title: "Payload stability sensitivity and low-current manoeuvre verification"
+  policy: >
+    This fixed, non-interactive protocol combines hydrostatic payload sensitivity
+    with deterministic 3-DOF manoeuvres. It is limited to the documented calm
+    and low-current sheltered-basin model. It does not represent a sea trial,
+    a wave-response analysis, structural certification or a physical sensor test.
+  validated_current_magnitude_mps: 0.020
+  payload_cases:
+    - identifier: dry_empty
+      title: "Dry craft / empty basket"
+      payload_mass_kg: 0.0
+      payload_position_m: [0.14, 0.00, 0.10]
+      classification: baseline
+      description: "Baseline dry craft with the removable basket installed and no collected debris."
+    - identifier: half_low_central
+      title: "Half payload / low central basket"
+      payload_mass_kg: 0.40
+      payload_position_m: [0.14, 0.00, 0.10]
+      classification: validated
+      description: "Half design payload at the documented low central basket location."
+    - identifier: full_low_central
+      title: "Full payload / low central basket"
+      payload_mass_kg: 0.80
+      payload_position_m: [0.14, 0.00, 0.10]
+      classification: validated
+      description: "Full design payload at the documented low central basket location."
+    - identifier: full_raised_central
+      title: "Full payload / raised central placement"
+      payload_mass_kg: 0.80
+      payload_position_m: [0.14, 0.00, 0.16]
+      classification: sensitivity
+      description: "Sensitivity case: full payload moved vertically to the enclosure/deck level."
+    - identifier: full_port_offset
+      title: "Full payload / port-offset basket"
+      payload_mass_kg: 0.80
+      payload_position_m: [0.14, 0.10, 0.10]
+      classification: sensitivity
+      description: "Quasi-static sensitivity case: full payload offset 0.10 m to port; offset moment is balanced against the nonlinear righting curve."
+  static_analysis:
+    heel_plot_max_deg: 15.0
+    offset_equilibrium_limit_deg: 5.0
+    required_minimum_gm_m: 0.20
+    required_minimum_freeboard_m: 0.05
+    required_righting_margin_ratio: 1.25
+  manoeuvres:
+    step_thrust:
+      duration_s: 42.0
+      onset_s: 2.0
+      thrust_per_side_n: 1.00
+      steady_window_s: 8.0
+    turning_circle:
+      duration_s: 38.0
+      onset_s: 2.0
+      port_thrust_n: 0.80
+      starboard_thrust_n: 1.20
+    zig_zag:
+      duration_s: 34.0
+      onset_s: 2.0
+      mean_thrust_per_side_n: 1.00
+      differential_thrust_n: 0.10
+      target_heading_deg: 10.0
+    low_current_turn:
+      current_earth_mps: [0.00, 0.020]
+      payload_case: full_low_central
+  acceptance:
+    minimum_full_payload_steady_speed_mps: 0.20
+    maximum_peak_yaw_rate_rps: 1.20
+    minimum_zigzag_heading_crossings: 2
+  visualisation:
+    frames: 72
+    fps: 8
+    bitrate_kbps: 1200
+    contact_sheet_samples: 5

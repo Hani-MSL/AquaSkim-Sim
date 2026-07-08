@@ -1,0 +1,47 @@
+# Local Git-ignored profile template. It is normally created by:
+# scripts\bootstrap_and_build.bat
+profile:
+  name: local_engineering_profile
+  schema_version: "2.0"
+  notes: "Copy of interactive profile structure; edit only after first successful build."
+submission_metadata:
+  student_name: ""
+  student_id: ""
+  course: "ربات‌های متحرک خودگردان"
+  instructor: ""
+  institution: ""
+overrides:
+  mission:
+    environment:
+      length_m: 12.0
+      width_m: 8.0
+      water_depth_m: 0.50
+  mechanical:
+    geometry:
+      hull_length_m: 0.70
+      hull_width_m: 0.09
+      hull_height_m: 0.16
+      hull_spacing_center_m: 0.36
+      thruster_spacing_m: 0.36
+      design_payload_kg: 0.80
+  energy:
+    battery:
+      capacity_ah: 5.0
+      nominal_energy_wh: 74.0
+  environment_model:
+    robot_safety_radius_m: 0.28
+  autonomy:
+    current_earth_mps: [0.0, 0.0]
+    initial_soc: 0.72
+    max_collections: 3
+    mission_duration_s: 240.0
+    coverage_lane_spacing_m: 0.90
+    cruise_speed_mps: 0.30
+    return_speed_mps: 0.28
+  validation:
+    phase09_2:
+      monte_carlo_trials: 24
+      valid_current_limit_mps: 0.15
+      valid_soc_floor: 0.42
+      animation_frames: 84
+      animation_fps: 10

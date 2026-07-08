@@ -1,0 +1,110 @@
+reference_design:
+  identifier: AQUASKIM-REF-01
+  title: "Reference Catamaran Surface-Cleaning Design"
+  configuration_policy: >
+    This is the fixed, documented reference design used by the reproducible build.
+    No interactive input is required for a reference run. Alternative conditions are
+    represented by explicit scenario files and automatic sensitivity studies.
+  model_scope: >
+    Twin-hull/twin-thruster catamaran; sheltered basin; static analytic obstacles;
+    low-current operating envelope; conceptual hydrostatic, hydrodynamic, energy,
+    3-DOF and autonomy models.
+
+overrides:
+  project:
+    version: "1.6.21"
+  mission:
+    environment:
+      length_m: 12.0
+      width_m: 8.0
+      water_depth_m: 0.50
+      home_position_m: [0.90, 0.90]
+  mechanical:
+    geometry:
+      hull_length_m: 0.70
+      hull_width_m: 0.09
+      hull_height_m: 0.16
+      hull_spacing_center_m: 0.36
+      basket_volume_l: 4.0
+      design_payload_kg: 0.80
+  energy:
+    battery:
+      nominal_voltage_v: 14.8
+      capacity_ah: 5.0
+      usable_fraction: 0.80
+  environment_model:
+    robot_safety_radius_m: 0.28
+    debris:
+      count: 8
+      mass_range_kg: [0.006, 0.024]
+      seed: 20260706
+  autonomy:
+    mission_duration_s: 1000.0
+    initial_soc: 0.80
+    control_period_s: 0.05
+    cruise_speed_mps: 0.18
+    approach_speed_mps: 0.12
+    return_speed_mps: 0.18
+    current_earth_mps: [0.0, 0.0]
+    coverage_lane_spacing_m: 0.90
+    safety_guard_distance_m: 0.35
+    waypoint_tolerance_m: 0.35
+    collection_radius_m: 0.45
+    heading_kp_n_m_per_rad: 0.10
+    heading_kd_n_m_per_rps: 0.12
+    speed_kp_n_per_mps: 2.00
+  experiment_model:
+    debris_field:
+      areal_density_items_m2: 0.08333333333333333
+      derived_discrete_item_count: 8
+      mean_item_mass_kg: 0.015
+      distribution: "uniform mass surrogate within the documented min/max interval"
+    hopper:
+      usable_volume_l: 4.0
+      payload_mass_limit_kg: 0.80
+      packing_factor: 0.62
+      equivalent_bulk_density_kg_m3: 75.0
+      return_trigger_fraction: 0.95
+      termination_policy: >
+        The vehicle returns when either hopper occupied volume or payload mass
+        reaches the documented trigger fraction, when energy reserve is inadequate,
+        when the mission time expires, or when the safety supervisor terminates.
+        A fixed collection-count quota is prohibited.
+
+
+reference_mission:
+  nominal_scenario_id: "REF-NOMINAL-COVERAGE"
+  validated_control_policy:
+    guidance_lookahead_m: 0.40
+    target_activation_range_m: 0.90
+    minimum_search_before_diversion_s: 12.0
+    current_compensation_enabled: true
+    current_compensation_gain: 1.0
+    current_compensation_activation_speed_mps: 0.0
+    low_speed_current_compensation_note: >
+      Feedforward remains active for every nonzero ground-speed command. This
+      prevents endpoint drift when arrival-speed scaling enters the low-speed
+      region under a known imposed current; at exactly zero command speed the
+      course command remains unchanged.
+    validated_current_limit_mps: 0.02
+    route_time_budget_factor: 4.0
+    numerical_guard_distance_m: 0.35
+    planner_clearance_margin_m: 0.12
+    pivot_entry_heading_error_deg: 37.0
+    pivot_exit_heading_error_deg: 11.5
+    pivot_thrust_per_side_n: 0.34
+    max_yaw_moment_n_m: 0.10
+    max_forward_thrust_n: 1.60
+    policy_note: >
+      Stop-turn-go guidance is used in the confined basin. The craft first
+      dissipates surge momentum, pivots with differential thrust, and then
+      follows the next A*-verified segment. This avoids cutting moving turns
+      across an obstacle corner.
+  visualisation:
+    replay_frames: 120
+    replay_fps: 10
+  nominal_expectations:
+    completion_mode: "coverage complete followed by home docking"
+    minimum_coverage_fraction: 1.0
+    expected_debris_field_count: 8
+    collection_count_is_a_result: true

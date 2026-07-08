@@ -1,0 +1,14 @@
+reference_payload_maneuver_visualisation:
+  identifier: AQUASKIM-REF-PAYMAN-VIS-01
+  policy: >
+    Animation is generated only from logged hydrostatic cases and logged 3-DOF
+    manoeuvre states. Frame labels identify simulated quantities, not physical
+    test footage. Presentation titles exclude phase and patch numbering.
+  render:
+    frames: 72
+    fps: 8
+    bitrate_kbps: 1200
+    contact_sheet_samples: 5
+    minimum_width_px: 1280
+    minimum_height_px: 720
+    expected_duration_s: 8.64

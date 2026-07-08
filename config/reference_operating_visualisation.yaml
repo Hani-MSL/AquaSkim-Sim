@@ -1,0 +1,18 @@
+reference_operating_visualisation:
+  identifier: AQUASKIM-REF-ENV-VIS-01
+  policy: >
+    Scenario animations render deterministic, logged operating-envelope results.
+    Boundary media are visibly labelled as boundary observations and are never
+    counted as a validated performance claim.
+  render:
+    frame_count: 100
+    fps: 10
+    contact_sheet_samples: 5
+    mp4_bitrate_kbps: 2200
+  acceptance:
+    minimum_frame_count: 96
+    minimum_duration_s: 9.0
+    minimum_width_px: 1280
+    minimum_height_px: 720
+    required_animation_count: 4
+    required_video_count: 4

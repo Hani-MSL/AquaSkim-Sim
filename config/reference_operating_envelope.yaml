@@ -1,0 +1,120 @@
+reference_operating_envelope:
+  identifier: AQUASKIM-REF-ENV-01
+  title: "Current-aware guidance and operating-envelope validation"
+  policy: >
+    This protocol evaluates the fixed non-interactive reference vehicle under
+    deterministic current, energy and hopper conditions. Validated scenarios
+    support the documented sheltered-basin operating envelope only. Boundary
+    scenarios deliberately probe beyond that envelope and are reported as
+    observed limits, not as validated capability or release success.
+  validated_current_limit_mps: 0.02
+  current_compensation_model: >
+    Earth-fixed route guidance requests a ground-track velocity. The controller
+    forms a water-relative command V_water = V_ground - V_current using the
+    known simulation current vector. This is deterministic feedforward in the
+    digital twin; it is not an estimator and does not imply open-water station keeping.
+  scenarios:
+    - id: calm_reference
+      title: "Calm-water reference coverage"
+      class: validated
+      description: "Reference coverage mission without imposed current."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.0, 0.0]
+          initial_soc: 0.80
+      expected:
+        mission_success: true
+        termination_contains: "all coverage lanes completed"
+        minimum_coverage_fraction: 1.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+    - id: east_current_0_02
+      title: "Eastward current, 0.02 m/s"
+      class: validated
+      description: "Axial low-current disturbance within the stated validated envelope."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.02, 0.0]
+          initial_soc: 0.80
+      expected:
+        mission_success: true
+        termination_contains: "all coverage lanes completed"
+        minimum_coverage_fraction: 1.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+    - id: north_current_0_02
+      title: "Northward current, 0.02 m/s"
+      class: validated
+      description: "Cross-track low-current disturbance within the stated validated envelope."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.0, 0.02]
+          initial_soc: 0.80
+      expected:
+        mission_success: true
+        termination_contains: "all coverage lanes completed"
+        minimum_coverage_fraction: 1.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+    - id: diagonal_current_0_02
+      title: "Diagonal current, magnitude about 0.02 m/s"
+      class: validated
+      description: "Combined longitudinal and lateral disturbance inside the stated validated envelope."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.014, -0.014]
+          initial_soc: 0.80
+      expected:
+        mission_success: true
+        termination_contains: "all coverage lanes completed"
+        minimum_coverage_fraction: 1.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+    - id: proactive_energy_return
+      title: "Energy-reserve return"
+      class: validated
+      description: "Low initial state of charge produces a conservative return before target diversion."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.0, 0.0]
+          initial_soc: 0.27
+      expected:
+        mission_success: true
+        termination_contains: "energy-aware return reserve reached"
+        minimum_coverage_fraction: 0.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+    - id: hopper_capacity_return
+      title: "High loading, hopper-capacity return"
+      class: validated
+      description: "Dense debris field verifies that return is triggered by occupied hopper volume rather than a collection count."
+      overrides:
+        environment_model:
+          debris:
+            count: 38
+            mass_range_kg: [0.006, 0.024]
+            seed: 20260706
+        experiment_model:
+          debris_field:
+            areal_density_items_m2: 0.40
+            derived_discrete_item_count: 38
+            mean_item_mass_kg: 0.015
+      expected:
+        mission_success: true
+        termination_contains: "hopper occupied-volume trigger reached"
+        minimum_coverage_fraction: 0.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+    - id: diagonal_boundary_0_05
+      title: "Diagonal boundary case, magnitude about 0.05 m/s"
+      class: boundary
+      description: "Deliberately beyond the validated current magnitude. Its outcome is retained as an observed model boundary, not a release claim."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.035, 0.035]
+          initial_soc: 0.80
+      expected:
+        mission_success: false
+        termination_contains: "mission time limit reached"
+        minimum_clearance_m: 0.35
+        boundary_observation: true

@@ -1,0 +1,85 @@
+phase: "Phase 09.2 — Comprehensive mission validation and operating-envelope study"
+validation_contract:
+  monte_carlo_trials: 24
+  monte_carlo_seed: 92021
+  valid_current_limit_mps: 0.15
+  valid_soc_floor: 0.42
+  required_valid_envelope_success_rate: 0.75
+  required_nonnegative_clearance: true
+  animation_frames: 84
+  animation_fps: 10
+  scenario_time_limit_s: 180.0
+
+deterministic_scenarios:
+  - id: nominal_multitarget
+    title: "Nominal multi-target collection"
+    class: "validated"
+    expected_outcome: "successful_completion"
+    description: "Baseline three-target mission in calm water."
+    overrides:
+      autonomy:
+        mission_duration_s: 180.0
+        max_collections: 3
+        initial_soc: 0.72
+        rth_soc_floor: 0.18
+        current_earth_mps: [0.0, 0.0]
+  - id: mild_east_current_safety_replan
+    title: "Mild east current with safety replan"
+    class: "validated"
+    expected_outcome: "successful_completion_with_safety_event"
+    description: "A mild cross-flow scenario intended to exercise the logged supervisory safety shield."
+    overrides:
+      autonomy:
+        mission_duration_s: 180.0
+        max_collections: 3
+        initial_soc: 0.72
+        rth_soc_floor: 0.18
+        current_earth_mps: [0.02, 0.0]
+  - id: north_current_operating_case
+    title: "North current operating case"
+    class: "validated"
+    expected_outcome: "successful_completion"
+    description: "A higher, but still validated, northward current operating point."
+    overrides:
+      autonomy:
+        mission_duration_s: 180.0
+        max_collections: 3
+        initial_soc: 0.72
+        rth_soc_floor: 0.18
+        current_earth_mps: [0.0, 0.15]
+  - id: proactive_energy_return
+    title: "Proactive energy return"
+    class: "validated"
+    expected_outcome: "proactive_return"
+    description: "Low initial SOC forces a conservative no-go decision before a target leg begins."
+    overrides:
+      autonomy:
+        mission_duration_s: 180.0
+        max_collections: 3
+        initial_soc: 0.24
+        rth_soc_floor: 0.18
+        current_earth_mps: [0.0, 0.0]
+  - id: high_current_boundary
+    title: "High-current boundary case"
+    class: "boundary"
+    expected_outcome: "time_limited_boundary"
+    description: "A deliberately demanding 0.20 m/s current case; its limit is reported rather than counted as a validated success."
+    overrides:
+      autonomy:
+        mission_duration_s: 180.0
+        max_collections: 3
+        initial_soc: 0.72
+        rth_soc_floor: 0.18
+        current_earth_mps: [0.20, 0.0]
+  - id: extended_quota_boundary
+    title: "Extended quota boundary case"
+    class: "boundary"
+    expected_outcome: "time_limited_boundary"
+    description: "A four-target request exposes mission-duration and target-availability limits without disguising them as failures of the validated baseline."
+    overrides:
+      autonomy:
+        mission_duration_s: 160.0
+        max_collections: 4
+        initial_soc: 0.72
+        rth_soc_floor: 0.18
+        current_earth_mps: [0.0, 0.0]

@@ -1,0 +1,15 @@
+scenario:
+  id: calm_water
+  title_fa: "آب آرام و مسیر پوششی پایه"
+  duration_s: 900.0
+environment:
+  current_speed_mps: 0.0
+  current_direction_deg: 0.0
+  obstacles: []
+  debris:
+    count: 18
+    mass_range_kg: [0.005, 0.030]
+    seed: 1101
+mission:
+  mode: coverage_then_collect
+  start_soc: 1.0

@@ -1,0 +1,100 @@
+from __future__ import annotations
+
+"""Public-repository hygiene checks for AquaSkim-Sim."""
+
+from dataclasses import dataclass
+from pathlib import Path
+import json
+
+from aquaskim.paths import PROJECT_ROOT, relative_to_root
+
+FORBIDDEN_ROOT_FILES = {"cd", "dir", "powershell", "tar", "type", "src_placeholder", "run_all.sh"}
+FORBIDDEN_LOCAL_FILES = {
+    "config/report_metadata.json",
+    "config/user_profile.yaml",
+}
+REQUIRED_PUBLIC_FILES = {
+    "README.md",
+    "README_FA.md",
+    "LICENSE",
+    "environment.yml",
+    "pyproject.toml",
+    "scripts/run_from_zero_to_delivery.bat",
+    "scripts/run_from_zero_to_delivery.sh",
+    "src/aquaskim/rebuild_from_zero.py",
+    "config/report_metadata.template.json",
+    ".github/workflows/ci.yml",
+}
+REQUIRED_README_PHRASES = {
+    "scripts\\run_from_zero_to_delivery.bat",
+    "DELIVERY_PACKAGE_READY",
+    "No sea-trial certification",
+    "outputs\\deliverables\\AquaSkim-Sim_Final_Delivery_v1.6.21.zip",
+}
+
+
+@dataclass(frozen=True)
+class ReadinessCheck:
+    name: str
+    passed: bool
+    detail: str
+
+
+def _exists(relative: str) -> bool:
+    return (PROJECT_ROOT / relative).exists()
+
+
+def run_github_readiness_checks() -> list[ReadinessCheck]:
+    checks: list[ReadinessCheck] = []
+
+    missing = sorted(path for path in REQUIRED_PUBLIC_FILES if not _exists(path))
+    checks.append(ReadinessCheck("required_public_files", not missing, json.dumps(missing, ensure_ascii=False)))
+
+    root_hits = sorted(path.name for path in PROJECT_ROOT.iterdir() if path.is_file() and path.name in FORBIDDEN_ROOT_FILES)
+    checks.append(ReadinessCheck("no_accidental_root_command_files", not root_hits, json.dumps(root_hits, ensure_ascii=False)))
+
+    local_hits = sorted(path for path in FORBIDDEN_LOCAL_FILES if _exists(path))
+    checks.append(ReadinessCheck("no_local_metadata_files", not local_hits, json.dumps(local_hits, ensure_ascii=False)))
+
+    generated_hits: list[str] = []
+    for folder in (PROJECT_ROOT / "outputs", PROJECT_ROOT / "records"):
+        if folder.exists():
+            for item in folder.rglob("*"):
+                if item.is_file() and item.name != ".gitkeep" and item.name != "README_FA.md" and item.name != "project_phase_registry.yaml":
+                    generated_hits.append(relative_to_root(item))
+                    if len(generated_hits) >= 20:
+                        break
+        if len(generated_hits) >= 20:
+            break
+    checks.append(ReadinessCheck("no_generated_outputs_committed", not generated_hits, json.dumps(generated_hits, ensure_ascii=False)))
+
+    readme = PROJECT_ROOT / "README.md"
+    text = readme.read_text(encoding="utf-8") if readme.exists() else ""
+    missing_phrases = sorted(phrase for phrase in REQUIRED_README_PHRASES if phrase not in text)
+    checks.append(ReadinessCheck("readme_documents_one_command_rebuild", not missing_phrases, json.dumps(missing_phrases, ensure_ascii=False)))
+
+    gitignore = PROJECT_ROOT / ".gitignore"
+    gitignore_text = gitignore.read_text(encoding="utf-8") if gitignore.exists() else ""
+    required_ignore_tokens = ["outputs/**", "records/**", "config/report_metadata.json", "config/user_profile.yaml"]
+    missing_ignore_tokens = sorted(token for token in required_ignore_tokens if token not in gitignore_text)
+    checks.append(ReadinessCheck("gitignore_protects_generated_and_local_files", not missing_ignore_tokens, json.dumps(missing_ignore_tokens, ensure_ascii=False)))
+
+    return checks
+
+
+def main() -> int:
+    checks = run_github_readiness_checks()
+    print("=" * 72)
+    print("AquaSkim-Sim | GitHub publication readiness")
+    print("=" * 72)
+    for check in checks:
+        state = "OK" if check.passed else "FAIL"
+        print(f"[{state}] {check.name}: {check.detail}")
+    passed = all(check.passed for check in checks)
+    print(f"Status: {'PASS' if passed else 'FAIL'}")
+    print("=" * 72)
+    return 0 if passed else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

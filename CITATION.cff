@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+title: AquaSkim-Sim
+type: software
+message: If you use this educational simulation project, please cite it using this metadata.
+authors:
+  - name: AquaSkim-Sim Project
+version: 1.6.21
+license: MIT

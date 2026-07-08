@@ -1,0 +1,55 @@
+reference_maneuver_protocol:
+  identifier: AQUASKIM-MAN-01
+  title: "Reference Dynamic Manoeuvre Verification"
+  policy: >
+    The manoeuvre suite is fixed and non-interactive. It evaluates the same
+    versioned twin-hull/twin-thruster reference design used by the mission suite.
+    Values are transparent inputs to repeatable model-verification cases, not
+    user prompts and not claims of full-scale certification.
+  step_thrust:
+    duration_s: 48.0
+    onset_s: 2.0
+    thrust_per_side_n: 1.00
+    steady_window_s: 8.0
+    rationale: >
+      One newton per thruster is a moderate symmetric command: it remains well
+      below the 5 N-per-side actuator limit and settles near the recommended
+      low-speed operating range while isolating surge dynamics.
+  turning_circle:
+    duration_s: 52.0
+    onset_s: 2.0
+    port_thrust_n: 0.80
+    starboard_thrust_n: 1.20
+    rationale: >
+      A 0.40 N differential at 0.18 m half-spacing gives a moderate yaw moment
+      while retaining positive forward thrust; it produces a planar turning path
+      without relying on rudders that this concept does not have.
+  zig_zag:
+    duration_s: 30.0
+    onset_s: 2.0
+    mean_thrust_per_side_n: 1.00
+    differential_thrust_n: 0.10
+    target_heading_deg: 10.0
+    minimum_reversals: 4
+    rationale: >
+      A plus/minus 10 degree heading demand with a 0.10 N differential is a
+      small-angle manoeuvre suited to observing yaw-rate damping and control
+      reversals without confounding the result with extreme pivot turns.
+  cross_current:
+    duration_s: 42.0
+    onset_s: 2.0
+    thrust_per_side_n: 1.00
+    current_earth_mps: [0.00, 0.10]
+    rationale: >
+      The cross-current is inside the documented low-current model envelope and
+      establishes the open-loop drift that later guidance must reject.
+  convergence:
+    turning_duration_s: 36.0
+    time_steps_s: [0.10, 0.05, 0.025, 0.0125]
+    reference_time_step_s: 0.0125
+    rationale: >
+      Successive halving identifies whether the declared 0.05 s reference step
+      is close to the finer 0.0125 s trajectory for this smooth RK4 test case.
+  visualisation:
+    frames: 72
+    fps: 10

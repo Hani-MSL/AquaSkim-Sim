@@ -1,0 +1,44 @@
+identifier: AQUASKIM-REL-GATE-01
+title: Engineering release-candidate gate
+policy: >-
+  This gate audits the fixed, non-interactive engineering evidence chain after
+  system validation and presentation curation. A PASS produces only an
+  ENGINEERING_RELEASE_CANDIDATE record for controlled Word-report work; it does
+  not enable the final delivery ZIP, final release scripts or distribution.
+required_evidence:
+  reports:
+    - outputs/reports/reference_mission_fidelity_and_visual_evidence.md
+    - outputs/reports/reference_operating_envelope_validation.md
+    - outputs/reports/reference_current_control_robustness_validation.md
+    - outputs/reports/reference_payload_maneuver_validation.md
+    - outputs/reports/reference_system_scenario_validation.md
+    - outputs/reports/reference_presentation_curation.md
+  visual_manifests:
+    - outputs/logs/reference_visual_evidence_quality_manifest.json
+    - outputs/logs/reference_operating_envelope_visual_quality_manifest.json
+    - outputs/logs/reference_current_control_visual_quality_manifest.json
+    - outputs/logs/reference_payload_maneuver_visual_quality_manifest.json
+    - outputs/logs/reference_system_visual_quality_manifest.json
+    - outputs/logs/reference_presentation_visual_quality_manifest.json
+curation_contract:
+  manifest: outputs/logs/reference_presentation_curation_manifest.json
+  visual_manifest: outputs/logs/reference_presentation_visual_quality_manifest.json
+  required_figures: 14
+  required_gif_mp4_pairs: 12
+  required_claim_classes:
+    - validated
+    - boundary
+    - controlled_failure
+release_controls:
+  final_scripts_must_remain_disabled: true
+  word_report_must_not_exist: true
+  delivery_zip_must_not_exist: true
+reference_policy:
+  local_user_profile_must_be_ignored: true
+  legacy_quota_modules_must_be_isolated: true
+  max_collections_must_be_removed_from_effective_reference_configuration: true
+model_boundary: >-
+  The gate evaluates source consistency, configured evidence and generated
+  artifacts from the low-speed 3-DOF sheltered-basin model. It does not convert
+  numerical evidence into sea-trial, certification, wave-response or onboard
+  current-estimation claims.

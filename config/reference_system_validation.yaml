@@ -1,0 +1,135 @@
+reference_system_validation:
+  identifier: AQUASKIM-REF-SYS-01
+  title: "System-level scenario validation and controlled failure evidence"
+  policy: >
+    This protocol performs deterministic, non-interactive system-level missions
+    using the fixed reference design. Validated scenarios demonstrate behavior
+    inside the documented sheltered-basin envelope. Boundary and controlled-
+    failure scenarios are retained as engineering evidence of limits and
+    expected supervisory termination; they are never counted as validated
+    operating success or release claims.
+  validated_current_limit_mps: 0.02
+  logging_sample_period_s: 0.25
+  accepted_classes:
+    - validated
+    - boundary
+    - controlled_failure
+  scenarios:
+    - id: nominal_coverage
+      title: "Nominal coverage and docking"
+      class: validated
+      description: "Calm-water coverage-led mission with local debris diversion and home docking."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.0, 0.0]
+          initial_soc: 0.80
+      expected:
+        mission_success: true
+        termination_contains: "all coverage lanes completed"
+        minimum_coverage_fraction: 1.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+        quota_absent: true
+
+    - id: cross_current_validated
+      title: "Cross-current compensated mission"
+      class: validated
+      description: "Known northward current inside the declared 0.02 m/s envelope."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.0, 0.02]
+          initial_soc: 0.80
+      expected:
+        mission_success: true
+        termination_contains: "all coverage lanes completed"
+        minimum_coverage_fraction: 1.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+        quota_absent: true
+
+    - id: energy_reserve_return
+      title: "Energy-reserve return"
+      class: validated
+      description: "Low initial SOC requests a conservative return before an extended search diversion."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.0, 0.0]
+          initial_soc: 0.27
+      expected:
+        mission_success: true
+        termination_contains: "energy-aware return reserve reached"
+        minimum_coverage_fraction: 0.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+        quota_absent: true
+
+    - id: hopper_capacity_return
+      title: "Hopper-capacity return"
+      class: validated
+      description: "Dense field verifies occupied-volume return behavior without a collection quota."
+      overrides:
+        environment_model:
+          debris:
+            count: 38
+            mass_range_kg: [0.006, 0.024]
+            seed: 20260706
+        experiment_model:
+          debris_field:
+            areal_density_items_m2: 0.40
+            derived_discrete_item_count: 38
+            mean_item_mass_kg: 0.015
+      expected:
+        mission_success: true
+        termination_contains: "hopper occupied-volume trigger reached"
+        minimum_coverage_fraction: 0.0
+        minimum_clearance_m: 0.35
+        maximum_home_error_m: 0.35
+        minimum_collected_count: 1
+        quota_absent: true
+
+    - id: diagonal_current_boundary
+      title: "Diagonal current boundary observation"
+      class: boundary
+      description: "Diagonal current outside the validated envelope; retained as a documented control boundary."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.035, 0.035]
+          initial_soc: 0.80
+      expected:
+        mission_success: false
+        termination_contains: "mission time limit reached"
+        minimum_clearance_m: 0.35
+        quota_absent: true
+
+    - id: scheduled_time_limit
+      title: "Scheduled time-limit termination"
+      class: controlled_failure
+      description: "An intentionally short mission budget demonstrates a non-colliding supervisory time-limit exit."
+      overrides:
+        autonomy:
+          mission_duration_s: 45.0
+          current_earth_mps: [0.0, 0.0]
+          initial_soc: 0.80
+      expected:
+        mission_success: false
+        termination_contains: "mission time limit reached"
+        minimum_clearance_m: 0.35
+        maximum_coverage_fraction: 0.10
+        quota_absent: true
+
+    - id: uncompensated_diagonal_crossflow
+      title: "Uncompensated diagonal crossflow"
+      class: controlled_failure
+      description: "Current compensation is intentionally disabled outside the validated envelope to expose the documented limitation."
+      overrides:
+        autonomy:
+          current_earth_mps: [0.035, 0.035]
+          initial_soc: 0.80
+        reference_mission:
+          validated_control_policy:
+            current_compensation_enabled: false
+      expected:
+        mission_success: false
+        termination_contains: "mission time limit reached"
+        minimum_clearance_m: 0.35
+        quota_absent: true

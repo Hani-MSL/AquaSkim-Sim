@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aquaskim-sim"
+version = "1.6.21"
+description = "Digital-twin simulation and engineering design of an autonomous catamaran surface-cleaning robot."
+requires-python = ">=3.11"
+authors = [
+  {name = "AquaSkim-Sim Project"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
+[project.urls]
+Homepage = "https://github.com/Hani-MSL/AquaSkim-Sim"
+Issues = "https://github.com/Hani-MSL/AquaSkim-Sim/issues"

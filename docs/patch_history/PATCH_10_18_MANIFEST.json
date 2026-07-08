@@ -1,0 +1,76 @@
+{
+  "identifier": "AQUASKIM-PATCH-10.18",
+  "title": "Final Word Report Generation and QA",
+  "files": [
+    {
+      "path": "AquaSkim-Sim/pyproject.toml",
+      "sha256": "9b70d51beb90742ec1c8901fbf587ff245e9b8888e96686ca0bf4bc10eef7ff1",
+      "size_bytes": 573
+    },
+    {
+      "path": "AquaSkim-Sim/README_FA.md",
+      "sha256": "b753eb65fadfeca59c74daffa6158216c6887b8a3488a0833c44d1a70543f44b",
+      "size_bytes": 1962
+    },
+    {
+      "path": "AquaSkim-Sim/config/reference_design.yaml",
+      "sha256": "c74c498414e860e090f54d6de9006838bdd1104c65566ca6dd87f367689ba7b9",
+      "size_bytes": 3881
+    },
+    {
+      "path": "AquaSkim-Sim/config/report_metadata.json",
+      "sha256": "2535da7c2e1437afa64cc0ad4241bac0f564cf59b8c155accd3e8d4bd9209ef5",
+      "size_bytes": 227
+    },
+    {
+      "path": "AquaSkim-Sim/src/aquaskim/__init__.py",
+      "sha256": "d170867b6e28edfd9b781f2a714c967ce06320a2ce9b788d08cda9ec4a08504e",
+      "size_bytes": 103
+    },
+    {
+      "path": "AquaSkim-Sim/src/aquaskim/paths.py",
+      "sha256": "4aadbde4e42c28a17a803816efe9d1083caad40fbe55cc5564d738350c96537b",
+      "size_bytes": 3207
+    },
+    {
+      "path": "AquaSkim-Sim/src/aquaskim/final_word_report.py",
+      "sha256": "823360ca2f3ddead3b2240f99163215b6be0bcc6137458bff8612df087df42eb",
+      "size_bytes": 32973
+    },
+    {
+      "path": "AquaSkim-Sim/src/aquaskim/phase10_18.py",
+      "sha256": "526e594c31422d7d99da27c3014edbbcdabb1ba9661f1b5f1bd40dcd359c48e7",
+      "size_bytes": 572
+    },
+    {
+      "path": "AquaSkim-Sim/scripts/run_patch_10_18_final_word_report.bat",
+      "sha256": "c56c0f4281ef29f726845c4dd1e1a1628e47ab847be5331c494b7ae8cc6ffa3e",
+      "size_bytes": 2689
+    },
+    {
+      "path": "AquaSkim-Sim/tests/test_phase10_17_release_gate.py",
+      "sha256": "4519d08f34203121fd80749bd34d6772da7198d8a028e815bc78248a27675422",
+      "size_bytes": 1616
+    },
+    {
+      "path": "AquaSkim-Sim/tests/test_phase10_18_final_word.py",
+      "sha256": "4714223117a1e1e2db3b568e4c7ba3d76af88cd470fe9087b3ec5f9c106d4f8f",
+      "size_bytes": 2813
+    },
+    {
+      "path": "AquaSkim-Sim/docs/PHASE_10_18_FINAL_WORD_REPORT_QA.md",
+      "sha256": "968cb14bf6dd7392f1e16945ea190af353f86f825fc34506e0b65196e6c43db6",
+      "size_bytes": 861
+    },
+    {
+      "path": "AquaSkim-Sim/docs/INCIDENTS/INCIDENT_20260708_PATCH10_18_WORD_NOT_DELIVERY.md",
+      "sha256": "36ea38db40a1b47f7f169d8085143d1bfad42f9921e7e6af1afd1a243e19eeb0",
+      "size_bytes": 400
+    },
+    {
+      "path": "AquaSkim-Sim/PATCH_10_18_APPLY.md",
+      "sha256": "240218cb3e97f83881f342c18c2d7c68f13381cabc89e95f8ff2e29b10a3b48a",
+      "size_bytes": 1088
+    }
+  ]
+}

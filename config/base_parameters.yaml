@@ -1,0 +1,252 @@
+project:
+  name: AquaSkim-Sim
+  version: 1.6.2
+  coordinate_system: "ENU (x: East, y: North, z: Up)"
+  random_seed: 2026
+
+mission:
+  environment:
+    length_m: 12.0
+    width_m: 8.0
+    water_depth_m: 0.50
+    default_current_speed_mps: 0.0
+    default_current_direction_deg: 0.0
+    home_position_m: [0.90, 0.90]
+  mission_limits:
+    max_duration_s: 3600.0
+    return_soc_threshold: 0.25
+    max_basket_payload_kg: 0.80
+    safety_distance_m: 0.45
+
+mechanical:
+  architecture: catamaran
+  reference_frame:
+    origin: "Geometric midpoint between hull centerlines at midship; z=0 is the hull keel datum."
+    x_positive: "forward toward collector inlet"
+    y_positive: "port side"
+    z_positive: "upward"
+  geometry:
+    hull_length_m: 0.70
+    hull_width_m: 0.09
+    hull_height_m: 0.16
+    hull_spacing_center_m: 0.36
+    hull_shape_factor: 0.68
+    waterplane_shape_factor: 0.88
+    deck_height_m: 0.115
+    collector_inlet_width_m: 0.30
+    collector_outlet_width_m: 0.14
+    collector_length_m: 0.24
+    collector_opening_angle_deg: 38.0
+    basket_volume_l: 4.0
+    thruster_spacing_m: 0.36
+    design_payload_kg: 0.80
+
+mass_budget:
+  components:
+    - {name: hull_left, mass_kg: 0.42, position_m: [0.00, 0.18, 0.06]}
+    - {name: hull_right, mass_kg: 0.42, position_m: [0.00, -0.18, 0.06]}
+    - {name: crossbeams_and_deck, mass_kg: 0.26, position_m: [0.00, 0.00, 0.12]}
+    - {name: battery, mass_kg: 0.55, position_m: [-0.05, 0.00, 0.08]}
+    - {name: thruster_left, mass_kg: 0.20, position_m: [-0.28, 0.18, 0.09]}
+    - {name: thruster_right, mass_kg: 0.20, position_m: [-0.28, -0.18, 0.09]}
+    - {name: electronics, mass_kg: 0.18, position_m: [0.04, 0.00, 0.15]}
+    - {name: collector, mass_kg: 0.25, position_m: [0.24, 0.00, 0.12]}
+    - {name: basket, mass_kg: 0.18, position_m: [0.14, 0.00, 0.10]}
+    - {name: enclosure, mass_kg: 0.22, position_m: [-0.02, 0.00, 0.16]}
+    - {name: wiring_and_fasteners, mass_kg: 0.12, position_m: [0.00, 0.00, 0.13]}
+
+hydrostatics:
+  water_density_kg_m3: 1000.0
+  gravity_mps2: 9.80665
+  kb_draft_fraction: 0.50
+  transverse_strip_count_per_hull: 241
+  analysis_heel_max_deg: 20.0
+  analysis_heel_step_deg: 0.25
+  linear_model_valid_to_deg: 5.0
+  operational_heel_limit_deg: 5.0
+  minimum_gm_m: 0.20
+  minimum_freeboard_m: 0.05
+  emergence_draft_tolerance_m: 0.001
+  payload_envelope_points: 41
+
+hydrodynamics:
+  water_density_kg_m3: 1000.0
+  kinematic_viscosity_m2ps: 1.004e-6
+  wetted_surface_shape_factor: 0.82
+  form_factor: 0.15
+  residual_resistance_coefficient: 0.0045
+  appendage_drag_area_m2: 0.0015
+  appendage_drag_coefficient: 1.10
+  collector_immersed_depth_m: 0.025
+  collector_drag_coefficient: 1.05
+  added_mass_fraction_surge: 0.12
+  analysis_speed_max_mps: 0.90
+  analysis_speed_points: 91
+  head_current_max_mps: 0.30
+  head_current_points: 31
+  minimum_thrust_reserve_ratio: 1.80
+  max_recommended_rpm_fraction: 0.85
+
+propulsion:
+  thruster:
+    count: 2
+    max_thrust_per_side_n: 5.0
+    max_power_per_side_w: 55.0
+    max_rpm: 4500.0
+    thrust_coefficient_n_per_rpm2: 2.47e-7
+    static_auxiliary_power_per_side_w: 1.5
+  limits:
+    target_cruise_speed_mps: 0.45
+    max_speed_mps: 0.60
+    max_yaw_rate_rps: 1.20
+
+energy:
+  battery:
+    chemistry: "Li-ion 4S conceptual pack"
+    nominal_voltage_v: 14.8
+    capacity_ah: 5.0
+    usable_fraction: 0.80
+    nominal_energy_wh: 74.0
+    capacity_derating_factor: 0.92
+    dc_bus_efficiency: 0.92
+    peukert_exponent: 1.05
+    reference_current_a: 1.0
+    max_continuous_discharge_current_a: 10.0
+    min_pack_voltage_v: 12.8
+    max_pack_voltage_v: 16.8
+  hotel_load_w: 8.0
+  model:
+    integration_time_step_s: 5.0
+    analysis_duration_s: 3600.0
+    safety_reserve_energy_wh: 5.0
+    return_speed_mps: 0.35
+    return_head_current_mps: 0.10
+    return_distance_max_m: 18.0
+    return_distance_points: 37
+    current_sensitivity_values_mps: [0.0, 0.10, 0.20]
+    minimum_endurance_at_cruise_min: 120.0
+    minimum_soc_after_nominal_mission: 0.35
+
+simulation:
+  time_step_s: 0.05
+  integrator: RK4
+  sensor_update_hz: 10
+  control_update_hz: 10
+  render_fps: 20
+  numerical_tolerance: 1.0e-9
+
+
+dynamics_3dof:
+  model_basis: "Planar 3-DOF body-fixed surge-sway-yaw model; ground velocity state with current-relative hydrodynamic drag."
+  added_mass_fraction_sway: 0.35
+  added_yaw_inertia_fraction: 0.18
+  sway_linear_damping_n_per_mps: 1.40
+  sway_quadratic_damping_n_per_mps2: 10.0
+  yaw_linear_damping_n_m_per_rps: 0.20
+  yaw_quadratic_damping_n_m_per_rps2: 0.30
+  max_simulation_time_s: 70.0
+  integration_time_step_s: 0.05
+  trajectory_sample_interval_s: 0.10
+  current_crossflow_mps: 0.18
+  cruise_thrust_multiplier: 1.00
+  turn_left_thrust_multiplier: 0.80
+  turn_right_thrust_multiplier: 1.20
+  turn_start_s: 14.0
+  turn_end_s: 19.0
+  scenario_start_delay_s: 2.0
+  straight_line_cross_track_limit_m: 0.10
+  maximum_expected_yaw_rate_rps: 1.20
+  steady_speed_tolerance_mps: 0.06
+
+
+environment_model:
+  model_basis: "Static analytic basin with occupancy inflation for a planar surface vessel."
+  occupancy_grid_resolution_m: 0.10
+  robot_safety_radius_m: 0.28
+  obstacles:
+    - {id: floating_boom, type: rectangle, center_m: [5.90, 4.00], size_m: [2.20, 0.35]}
+    - {id: mooring_buoy_a, type: circle, center_m: [3.10, 5.85], radius_m: 0.24}
+    - {id: mooring_buoy_b, type: circle, center_m: [8.95, 2.05], radius_m: 0.24}
+    - {id: service_pier, type: rectangle, center_m: [10.35, 5.85], size_m: [0.75, 1.20]}
+  debris:
+    count: 28
+    radius_range_m: [0.025, 0.065]
+    mass_range_kg: [0.005, 0.040]
+    clearance_m: 0.16
+    seed: 7107
+
+sensors:
+  gps:
+    position_std_m: 0.045
+  compass:
+    heading_std_deg: 2.0
+  range_sensor:
+    max_range_m: 3.00
+    field_of_view_deg: 80.0
+    beam_count: 5
+    ray_step_m: 0.02
+  debris_detector:
+    max_range_m: 2.20
+    field_of_view_deg: 95.0
+    probability_at_zero_range: 0.96
+    minimum_probability: 0.12
+  demo:
+    duration_s: 90.0
+    sample_period_s: 0.20
+
+autonomy:
+  mission_duration_s: 240.0
+  integration_time_step_s: 0.05
+  control_period_s: 0.10
+  current_earth_mps: [0.00, 0.00]
+  cruise_speed_mps: 0.30
+  approach_speed_mps: 0.20
+  return_speed_mps: 0.28
+  waypoint_tolerance_m: 0.20
+  collection_radius_m: 0.30
+  collection_hold_s: 1.50
+  max_collections: 3
+  initial_soc: 0.72
+  rth_soc_floor: 0.18
+  soc_reserve_margin: 0.05
+  return_energy_reserve_wh: 4.0
+  return_energy_margin: 1.35
+  safety_guard_distance_m: 0.35
+  safety_recovery_distance_m: 0.70
+  replan_cooldown_s: 1.50
+  coverage_lane_spacing_m: 0.90
+  heading_kp_n_m_per_rad: 0.12
+  heading_kd_n_m_per_rps: 0.08
+  speed_kp_n_per_mps: 2.80
+  minimum_hazard_distance_m: 0.30
+  replan_distance_m: 0.70
+  visual_detection_min_count: 2
+  random_seed: 8026
+
+validation:
+  phase09_2:
+    monte_carlo_trials: 24
+    valid_current_limit_mps: 0.15
+    valid_soc_floor: 0.42
+    required_valid_envelope_success_rate: 0.75
+    animation_frames: 84
+    animation_fps: 10
+
+
+# Scientific experiment semantics used by local profiles.
+# These fields define physical loading and hopper limits; raw debris count is
+# derived internally from basin area × areal density.
+experiment_model:
+  debris_field:
+    areal_density_items_m2: 0.25
+    nominal_equivalent_thickness_m: 0.012
+    interpretation: "A stochastic debris field is specified by surface density, not by a user-selected count."
+  hopper:
+    usable_volume_l: 4.0
+    payload_mass_limit_kg: 0.80
+    packing_factor: 0.62
+    termination_policy: "Return when mass or occupied-volume capacity is reached; collected item count is an output metric."
+
+# Configuration recovery note:
+# This file is the complete engineering baseline required by all numerical phases.
+# The official reference build ignores config/user_profile.yaml by default.

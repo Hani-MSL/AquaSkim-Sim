@@ -1,0 +1,101 @@
+{
+  "patch": "10.11",
+  "title": "Reference Mission Fidelity and Visual Evidence Upgrade",
+  "files": [
+    {
+      "path": "PATCH_10_11_APPLY.md",
+      "sha256": "acdf4fb477fda26674140ac50a6d3ba2efefeae166f388647a3bbaae5bad19a9",
+      "size_bytes": 1749
+    },
+    {
+      "path": "config/reference_design.yaml",
+      "sha256": "ab5b2d2daf97c098c6a642db6c5e49bbf05cc62e731ca47e7564c3961a6b986d",
+      "size_bytes": 3425
+    },
+    {
+      "path": "config/reference_visualisation.yaml",
+      "sha256": "e3dd008b0f780d89453cbd43c333409b28c5da3e89fecec129d997e168cfc1f2",
+      "size_bytes": 595
+    },
+    {
+      "path": "docs/phases/phase_10_11/01_SCOPE_AND_ACCEPTANCE.md",
+      "sha256": "25dc388dfa205c741b7f37db56c582db4db095d43b9a622a157921430952d19d",
+      "size_bytes": 1076
+    },
+    {
+      "path": "docs/phases/phase_10_11/02_REFERENCE_VISUAL_PROTOCOL.md",
+      "sha256": "b75a55585da1eb8442fddf1feecee595fc7508ccd8d05124cd02bfdb1897433a",
+      "size_bytes": 403
+    },
+    {
+      "path": "patch_notes/PATCH_10_11_REFERENCE_FIDELITY.md",
+      "sha256": "d1cbf620808b9bc847433d40ab2e69e4dbe597697d28fc235b5301839307bbdb",
+      "size_bytes": 644
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "6ac0d1eb9db9512f89afaa0a39f6de425d78a3c24a0e76ef53599131f9ff26c3",
+      "size_bytes": 572
+    },
+    {
+      "path": "scripts/run_patch_10_11_reference_fidelity.bat",
+      "sha256": "29f5716ad4a701e983deac55172a79cff1081974b8177720f6797ee522b07b28",
+      "size_bytes": 1987
+    },
+    {
+      "path": "src/aquaskim/__init__.py",
+      "sha256": "5fdef0f4331b23eff54760bab25bd66a937d3833637f5ddaacf14a3d792c3ee4",
+      "size_bytes": 102
+    },
+    {
+      "path": "src/aquaskim/cli.py",
+      "sha256": "82195996a9917f620627b76ba16c4f4cb9334a1f94713101adc7b6e05a5a32a2",
+      "size_bytes": 4807
+    },
+    {
+      "path": "src/aquaskim/integrity_audit.py",
+      "sha256": "09747610abf94fa040537fb8f634d70a4d5c0c42dfadb1acbfe92d3ac0ed7eae",
+      "size_bytes": 9360
+    },
+    {
+      "path": "src/aquaskim/legacy_registry.py",
+      "sha256": "ca604ea107358348e78031e8bf36950c785a73d261b5f301f27a5abb067b87ef",
+      "size_bytes": 2550
+    },
+    {
+      "path": "src/aquaskim/mission_quality.py",
+      "sha256": "d5e6a75af8ecf45cce72ab3dfed6de4b6ae4048cd6a9b8f3b1f05829b2dbea44",
+      "size_bytes": 35954
+    },
+    {
+      "path": "src/aquaskim/paths.py",
+      "sha256": "7607bed3c0a03beda5fa321f99b846f920668566c4303519f902b40130c364a9",
+      "size_bytes": 3063
+    },
+    {
+      "path": "src/aquaskim/phase10_11.py",
+      "sha256": "899166722172597e13862e0d6a69e3eda3ce18deb65f41ed37303d4d4779c4ce",
+      "size_bytes": 42561
+    },
+    {
+      "path": "src/aquaskim/phase10_6.py",
+      "sha256": "e43dfc22bea5b92ee8038fe4e34c9b4bc1c69b1995705efe35f8c8bff536f3b9",
+      "size_bytes": 33401
+    },
+    {
+      "path": "src/aquaskim/reference_fidelity.py",
+      "sha256": "b2bb4098cfd64697ec71e3b83cbfbfa1563fbec8a6e82e6a79af023a6c0061de",
+      "size_bytes": 7444
+    },
+    {
+      "path": "tests/test_phase10_11_reference_fidelity.py",
+      "sha256": "3b5837dc686273c441b43c8bb19d4d7d0ca346fc9f66fd84a81c1db8a64d7cea",
+      "size_bytes": 1855
+    },
+    {
+      "path": "tests/test_phase10_11_render_contract.py",
+      "sha256": "1c918c7583ea051774cb5c0cbc99c77008ec83b09bd7680ef8e1c65af49baedf",
+      "size_bytes": 416
+    }
+  ]
+}

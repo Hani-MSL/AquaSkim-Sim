@@ -1,0 +1,22 @@
+scenario:
+  identifier: "REF-HIGH-LOADING-CAPACITY"
+  title: "High debris loading with hopper-limited return"
+  purpose: >
+    Stress the storage decision independently of the reference coverage case.
+    The craft should return when occupied hopper volume reaches its documented
+    trigger, not after a preset collection count.
+  model_scope: >
+    Same vehicle and basin as the reference design; calm water; the debris field
+    is denser. This is a validation scenario, not a new vehicle design.
+
+overrides:
+  environment_model:
+    debris:
+      count: 38
+      mass_range_kg: [0.006, 0.024]
+      seed: 20260706
+  experiment_model:
+    debris_field:
+      areal_density_items_m2: 0.40
+      derived_discrete_item_count: 38
+      mean_item_mass_kg: 0.015
