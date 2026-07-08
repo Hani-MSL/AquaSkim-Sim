@@ -12,7 +12,7 @@ echo.
 where conda >nul 2>nul
 if errorlevel 1 (
   echo [ERROR] Conda was not found on PATH.
-  echo [INFO] Install Miniconda/Mambaforge, then run: conda env create -f environment.yml
+  echo [INFO] Install Miniconda or Mambaforge, reopen Command Prompt, then run this script again.
   exit /b 1
 )
 
@@ -20,6 +20,12 @@ call conda activate aquaskim-sim
 if errorlevel 1 (
   echo [INFO] Conda environment aquaskim-sim was not found. Creating it from environment.yml...
   call conda env create -f environment.yml
+  if errorlevel 1 exit /b 1
+  call conda activate aquaskim-sim
+  if errorlevel 1 exit /b 1
+) else (
+  echo [INFO] Conda environment aquaskim-sim already exists. Updating it from environment.yml...
+  call conda env update -n aquaskim-sim -f environment.yml --prune
   if errorlevel 1 exit /b 1
   call conda activate aquaskim-sim
   if errorlevel 1 exit /b 1
