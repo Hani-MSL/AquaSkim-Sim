@@ -3,10 +3,10 @@ from __future__ import annotations
 """Public-repository hygiene checks for AquaSkim-Sim."""
 
 from dataclasses import dataclass
-from pathlib import Path
 import json
+import subprocess
 
-from aquaskim.paths import PROJECT_ROOT, relative_to_root
+from aquaskim.paths import PROJECT_ROOT
 
 FORBIDDEN_ROOT_FILES = {"cd", "dir", "powershell", "tar", "type", "src_placeholder", "run_all.sh"}
 FORBIDDEN_LOCAL_FILES = {
@@ -31,6 +31,12 @@ REQUIRED_README_PHRASES = {
     "No sea-trial certification",
     "outputs\\deliverables\\AquaSkim-Sim_Final_Delivery_v1.6.21.zip",
 }
+ALLOWED_GENERATED_TRACKED_FILES = {
+    "outputs/.gitkeep",
+    "outputs/README_FA.md",
+    "records/.gitkeep",
+    "records/project_phase_registry.yaml",
+}
 
 
 @dataclass(frozen=True)
@@ -42,6 +48,31 @@ class ReadinessCheck:
 
 def _exists(relative: str) -> bool:
     return (PROJECT_ROOT / relative).exists()
+
+
+def _tracked_generated_artifacts() -> list[str]:
+    """Return generated output files that are actually tracked by Git.
+
+    CI and local audit commands may create untracked files under outputs/ or
+    records/. Those files should not fail a public-repository hygiene check;
+    only files that are part of the Git index should be treated as committed
+    generated artifacts.
+    """
+    try:
+        completed = subprocess.run(
+            ["git", "ls-files", "outputs", "records"],
+            cwd=PROJECT_ROOT,
+            check=False,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except FileNotFoundError:
+        return []
+    if completed.returncode != 0:
+        return []
+    tracked = [line.strip().replace("\\", "/") for line in completed.stdout.splitlines() if line.strip()]
+    return sorted(path for path in tracked if path not in ALLOWED_GENERATED_TRACKED_FILES)
 
 
 def run_github_readiness_checks() -> list[ReadinessCheck]:
@@ -56,16 +87,7 @@ def run_github_readiness_checks() -> list[ReadinessCheck]:
     local_hits = sorted(path for path in FORBIDDEN_LOCAL_FILES if _exists(path))
     checks.append(ReadinessCheck("no_local_metadata_files", not local_hits, json.dumps(local_hits, ensure_ascii=False)))
 
-    generated_hits: list[str] = []
-    for folder in (PROJECT_ROOT / "outputs", PROJECT_ROOT / "records"):
-        if folder.exists():
-            for item in folder.rglob("*"):
-                if item.is_file() and item.name != ".gitkeep" and item.name != "README_FA.md" and item.name != "project_phase_registry.yaml":
-                    generated_hits.append(relative_to_root(item))
-                    if len(generated_hits) >= 20:
-                        break
-        if len(generated_hits) >= 20:
-            break
+    generated_hits = _tracked_generated_artifacts()
     checks.append(ReadinessCheck("no_generated_outputs_committed", not generated_hits, json.dumps(generated_hits, ensure_ascii=False)))
 
     readme = PROJECT_ROOT / "README.md"
