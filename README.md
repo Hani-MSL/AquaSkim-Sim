@@ -4,6 +4,8 @@ AquaSkim-Sim is an educational engineering simulation project for an autonomous 
 
 > **Scope boundary:** this repository contains numerical simulation evidence only. It is **not** sea-trial footage, a certification package, wave-response validation, onboard current-estimator validation, or hardware commissioning proof.
 
+The primary user guide is Persian: see [`README_FA.md`](README_FA.md). This English README is a compact companion.
+
 ## What this project produces
 
 A clean rebuild creates a new local `outputs/` folder containing:
@@ -13,37 +15,61 @@ A clean rebuild creates a new local `outputs/` folder containing:
 - GIF/MP4 visual evidence generated locally,
 - presentation evidence contact sheets,
 - an engineering release-candidate gate,
-- a final Word report,
+- a final Word report in English,
 - a final delivery ZIP with SHA-256 manifests.
 
 Generated artifacts are intentionally ignored by Git. They are reproducible outputs, not source files.
 
+## Prerequisites
+
+Install these first:
+
+1. **Git**, for cloning the repository.
+2. **Miniconda** or **Mambaforge**, for creating the Python environment.
+3. Windows 10/11 is the primary supported path for the `.bat` command.
+
+The project script creates or updates the Conda environment, installs the Python dependencies, installs the package in editable mode, cleans previous local outputs, and regenerates the full output tree. It does not install Git or Miniconda/Mambaforge for you.
+
 ## Quick start: one command on Windows
 
-Install Miniconda or Mambaforge first. Then clone the repository and run:
+Open a fresh Command Prompt and run:
 
 ```bat
+git clone https://github.com/Hani-MSL/AquaSkim-Sim.git
+cd AquaSkim-Sim
 scripts\run_from_zero_to_delivery.bat
 ```
 
 The script will:
 
 1. create or activate the `aquaskim-sim` Conda environment,
-2. install the package in editable mode,
-3. clean old generated `outputs/` and `records/`,
-4. regenerate all evidence from source,
-5. build the final Word report,
-6. create the final delivery ZIP.
+2. update the existing environment from `environment.yml` when it already exists,
+3. install/synchronize dependencies such as `numpy`, `scipy`, `pandas`, `matplotlib`, `python-docx`, `imageio`, and `ffmpeg`,
+4. install the package in editable mode,
+5. clean old generated `outputs/` and `records/`,
+6. regenerate all evidence from source,
+7. build the final English Word report,
+8. create the final delivery ZIP.
 
 Expected final artifact:
 
 ```text
 outputs\deliverables\AquaSkim-Sim_Final_Delivery_v1.6.21.zip
-
-> The generated final Word report is intentionally English. The Persian README is the primary user guide for this repository.
 ```
 
-The full rebuild may take a while because it generates figures, GIFs, MP4s, CSV tables, QA manifests, and the final package.
+The full rebuild may take a while because it generates figures, GIFs, MP4s, CSV tables, QA manifests, the Word report, and the final package.
+
+## Linux/macOS quick start
+
+Windows is the primary supported path, but a shell entry point is also included:
+
+```bash
+git clone https://github.com/Hani-MSL/AquaSkim-Sim.git
+cd AquaSkim-Sim
+bash scripts/run_from_zero_to_delivery.sh
+```
+
+This script also creates or updates the Conda environment before running the full rebuild.
 
 ## Manual environment setup
 
@@ -123,6 +149,13 @@ A valid final audit reports:
 ```text
 DELIVERY_PACKAGE_READY
 ```
+
+## Execution notes
+
+- If `conda` is not recognized, install Miniconda/Mambaforge and open a new terminal.
+- The first run needs internet access so Conda can download dependencies.
+- Generated outputs are not committed; they are rebuilt locally by the one-command workflow.
+- If the `aquaskim-sim` environment already exists, the script updates it from `environment.yml`.
 
 ## Non-claims
 
