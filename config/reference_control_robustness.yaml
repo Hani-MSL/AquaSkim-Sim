@@ -1,0 +1,78 @@
+reference_control_robustness:
+  identifier: AQUASKIM-REF-CTRL-01
+  title: "Current-aware path-holding and control robustness"
+  policy: >
+    This protocol evaluates a single earth-fixed straight-track manoeuvre using
+    the fixed non-interactive reference plant. It separates open-loop current
+    drift, current-aware course correction and bounded heading-controller gain
+    sensitivity. It is a deterministic digital-twin study within the sheltered-
+    basin low-speed scope; it is not a sea-trial claim, current estimator or
+    full-scale certification.
+  validated_current_magnitude_mps: 0.02
+  track_hold:
+    duration_s: 72.0
+    onset_s: 2.0
+    target_ground_speed_mps: 0.18
+    target_ground_heading_deg: 0.0
+    current_earth_mps: [0.0, 0.02]
+    cross_track_lookahead_m: 1.10
+    control_period_s: 0.05
+    max_yaw_moment_n_m: 0.10
+    max_forward_thrust_n: 1.60
+    min_turn_thrust_n: 0.60
+    pivot_turn_thrust_n: 0.34
+    pivot_entry_heading_error_deg: 37.0
+    pivot_exit_heading_error_deg: 11.5
+    open_loop_thrust_per_side_n: 1.00
+    rationale: >
+      The line is earth-fixed along the x axis. A northward current causes
+      observable open-loop drift; current-aware guidance commands a crab angle
+      using V_water = V_ground - V_current while the feedback controller removes
+      residual cross-track deviation.
+  cases:
+    - id: open_loop_cross_current
+      title: "Open-loop cross-current drift"
+      classification: comparison
+      control_mode: open_loop
+      current_compensation_gain: 0.0
+      heading_kp_scale: 1.0
+      heading_kd_scale: 1.0
+      description: "Symmetric thrust under the validated northward current without course correction."
+    - id: compensated_nominal
+      title: "Current-aware path holding"
+      classification: validated
+      control_mode: current_aware
+      current_compensation_gain: 1.0
+      heading_kp_scale: 1.0
+      heading_kd_scale: 1.0
+      description: "Current-aware course feedforward with nominal documented heading gains."
+    - id: compensated_partial_gain
+      title: "Partial current feedforward"
+      classification: comparison
+      control_mode: current_aware
+      current_compensation_gain: 0.50
+      heading_kp_scale: 1.0
+      heading_kd_scale: 1.0
+      description: "Half-gain current feedforward illustrates residual correction demand."
+  sensitivity:
+    heading_kp_scales: [0.80, 1.00, 1.20]
+    heading_kd_scales: [0.80, 1.00, 1.20]
+    control_mode: current_aware
+    current_compensation_gain: 1.0
+    description: >
+      A nine-point bounded gain grid around the documented reference gains.
+      These are sensitivity samples, not an optimizer and not a claim that all
+      possible tuning combinations have been certified.
+  acceptance:
+    compensated_max_p95_abs_cross_track_m: 0.05
+    compensated_max_final_abs_cross_track_m: 0.03
+    compensated_max_p95_heading_error_deg: 3.0
+    open_loop_min_final_abs_cross_track_m: 0.50
+    sensitivity_max_p95_abs_cross_track_m: 0.04
+    sensitivity_max_p95_heading_error_deg: 2.0
+    sensitivity_min_mean_ground_speed_mps: 0.16
+    no_current_exceeds_validated_limit: true
+  model_boundary: >
+    The 0.02 m/s current magnitude is the declared validated upper bound for
+    this protocol. The model uses a known imposed current vector; no onboard
+    current sensing or estimation is represented.

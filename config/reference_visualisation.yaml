@@ -1,0 +1,18 @@
+reference_visualisation:
+  identifier: AQUASKIM-REF-VIS-02
+  policy: >
+    Presentation media are sampled from deterministic, logged reference missions.
+    Animation frames visualise numerical state history; they do not substitute a
+    path or alter model results. This configuration has no control authority.
+  render:
+    frame_count: 120
+    fps: 10
+    contact_sheet_samples: 5
+    mp4_bitrate_kbps: 2200
+  acceptance:
+    minimum_frame_count: 96
+    minimum_duration_s: 9.0
+    minimum_width_px: 1280
+    minimum_height_px: 720
+    required_animation_count: 6
+    required_video_count: 6

@@ -1,0 +1,15 @@
+reference_control_visualisation:
+  identifier: AQUASKIM-REF-CTRL-VIS-01
+  render:
+    frames: 72
+    fps: 8
+    min_width_px: 1280
+    min_height_px: 720
+    contact_sheet_samples: 5
+    mp4_bitrate_kbps: 2200
+  policy: >
+    Each replay is derived from logged RK4 state histories or documented
+    deterministic sensitivity results. GIF playback uses the encoder-representable
+    120 ms frame delay at 8 fps (72 frames / 8.64 s); MP4 playback is 9.0 s. Presentation titles omit development
+    patch names. Contact sheets sample the beginning, quarter points, midpoint,
+    three-quarter point and end of every GIF.

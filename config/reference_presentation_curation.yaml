@@ -1,0 +1,162 @@
+identifier: AQUASKIM-REF-PRESENT-01
+title: Curated reference evidence for engineering presentation
+policy: >-
+  This curation is an evidence-selection and quality-control step. It does not
+  execute a mission, modify the digital twin, create a Word report, build a
+  delivery ZIP, or declare release readiness. Validated, boundary and
+  controlled-failure material remain explicitly classified in every manifest.
+figure_quality:
+  min_width_px: 1100
+  min_height_px: 700
+media_quality:
+  min_gif_frames: 72
+  min_gif_duration_s: 8.0
+  min_gif_width_px: 1280
+  min_gif_height_px: 720
+  min_mp4_duration_s: 8.0
+  min_mp4_width_px: 1280
+  min_mp4_height_px: 720
+figures:
+  - id: nominal_coverage
+    source: outputs/figures/reference_nominal_fidelity_map.png
+    title: Nominal coverage mission
+    claim_class: validated
+    report_priority: 1
+  - id: capacity_return
+    source: outputs/figures/reference_high_loading_fidelity_map.png
+    title: Hopper-capacity return mission
+    claim_class: validated
+    report_priority: 1
+  - id: mission_control_clearance
+    source: outputs/figures/reference_mission_control_clearance.png
+    title: Closed-loop control and clearance
+    claim_class: validated
+    report_priority: 1
+  - id: current_compensation
+    source: outputs/figures/reference_current_compensation_dashboard.png
+    title: Known-current compensation
+    claim_class: validated
+    report_priority: 1
+  - id: track_comparison
+    source: outputs/figures/reference_current_track_comparison.png
+    title: Open-loop versus current-aware path holding
+    claim_class: validated
+    report_priority: 1
+  - id: gain_sensitivity
+    source: outputs/figures/reference_controller_sensitivity_map.png
+    title: Bounded heading-gain sensitivity
+    claim_class: validated
+    report_priority: 2
+  - id: payload_stability
+    source: outputs/figures/reference_payload_stability_envelope.png
+    title: Payload stability envelope
+    claim_class: validated
+    report_priority: 1
+  - id: payload_offset
+    source: outputs/figures/reference_payload_offset_heel_budget.png
+    title: Asymmetric payload heel budget
+    claim_class: validated
+    report_priority: 2
+  - id: payload_maneuvers
+    source: outputs/figures/reference_payload_dynamic_maneuvers.png
+    title: Full-payload low-current manoeuvres
+    claim_class: validated
+    report_priority: 1
+  - id: payload_current_matrix
+    source: outputs/figures/reference_payload_current_maneuver_matrix.png
+    title: Current-sensitive manoeuvre matrix
+    claim_class: validated
+    report_priority: 2
+  - id: scenario_trajectories
+    source: outputs/figures/reference_system_scenario_trajectories.png
+    title: System-level scenario trajectories
+    claim_class: mixed
+    report_priority: 1
+  - id: termination_matrix
+    source: outputs/figures/reference_system_termination_matrix.png
+    title: Mission termination matrix
+    claim_class: mixed
+    report_priority: 1
+  - id: failure_evidence
+    source: outputs/figures/reference_system_failure_evidence.png
+    title: Boundary and controlled-failure evidence
+    claim_class: controlled_failure
+    report_priority: 1
+  - id: acceptance_scorecard
+    source: outputs/figures/reference_system_acceptance_scorecard.png
+    title: System-level acceptance scorecard
+    claim_class: validated
+    report_priority: 1
+media:
+  - id: nominal_mission
+    gif: outputs/animations/reference_nominal_fidelity_replay.gif
+    mp4: outputs/videos/reference_nominal_fidelity_replay.mp4
+    title: Nominal coverage mission replay
+    claim_class: validated
+    presentation_priority: 1
+  - id: capacity_return
+    gif: outputs/animations/reference_high_loading_fidelity_replay.gif
+    mp4: outputs/videos/reference_high_loading_fidelity_replay.mp4
+    title: Capacity-based return replay
+    claim_class: validated
+    presentation_priority: 1
+  - id: telemetry
+    gif: outputs/animations/reference_nominal_telemetry_longform.gif
+    mp4: outputs/videos/reference_nominal_telemetry_longform.mp4
+    title: Nominal mission telemetry replay
+    claim_class: validated
+    presentation_priority: 2
+  - id: cross_current
+    gif: outputs/animations/reference_cross_current_compensated_replay.gif
+    mp4: outputs/videos/reference_cross_current_compensated_replay.mp4
+    title: Cross-current compensated replay
+    claim_class: validated
+    presentation_priority: 1
+  - id: diagonal_boundary
+    gif: outputs/animations/reference_diagonal_boundary_replay.gif
+    mp4: outputs/videos/reference_diagonal_boundary_replay.mp4
+    title: Diagonal current boundary observation
+    claim_class: boundary
+    presentation_priority: 2
+  - id: control_comparison
+    gif: outputs/animations/reference_open_loop_vs_current_aware_replay.gif
+    mp4: outputs/videos/reference_open_loop_vs_current_aware_replay.mp4
+    title: Open-loop versus current-aware control replay
+    claim_class: validated
+    presentation_priority: 1
+  - id: payload_stability
+    gif: outputs/animations/reference_payload_stability_replay.gif
+    mp4: outputs/videos/reference_payload_stability_replay.mp4
+    title: Payload stability replay
+    claim_class: validated
+    presentation_priority: 2
+  - id: payload_turn
+    gif: outputs/animations/reference_payload_turn_current_replay.gif
+    mp4: outputs/videos/reference_payload_turn_current_replay.mp4
+    title: Full-payload turn with low current
+    claim_class: validated
+    presentation_priority: 2
+  - id: validated_system
+    gif: outputs/animations/reference_system_validated_scenarios_replay.gif
+    mp4: outputs/videos/reference_system_validated_scenarios_replay.mp4
+    title: Validated system scenario suite
+    claim_class: validated
+    presentation_priority: 1
+  - id: time_limit_stop
+    gif: outputs/animations/reference_system_time_limit_controlled_replay.gif
+    mp4: outputs/videos/reference_system_time_limit_controlled_replay.mp4
+    title: Time-limit controlled stop
+    claim_class: controlled_failure
+    presentation_priority: 2
+  - id: boundary_uncompensated
+    gif: outputs/animations/reference_system_boundary_vs_uncompensated_replay.gif
+    mp4: outputs/videos/reference_system_boundary_vs_uncompensated_replay.mp4
+    title: Boundary versus uncompensated crossflow
+    claim_class: mixed
+    presentation_priority: 1
+  - id: event_timeline
+    gif: outputs/animations/reference_system_event_timeline_replay.gif
+    mp4: outputs/videos/reference_system_event_timeline_replay.mp4
+    title: Mission-event timeline replay
+    claim_class: mixed
+    presentation_priority: 2

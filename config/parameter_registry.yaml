@@ -1,0 +1,330 @@
+registry:
+  policy: 'Every parameter in the reference build has a declared role, unit, source of justification, valid range
+    and verification artifact. Derived values are never treated as independently tuned inputs.
+
+    '
+parameters:
+- id: GEO-L-001
+  name: Hull length
+  symbol: L
+  value: 0.7
+  unit: m
+  category: design
+  rationale: Balances internal equipment volume, longitudinal waterline area and a compact basin-scale vehicle envelope.
+  basis: Reference geometry and conceptual CAD model.
+  valid_range:
+  - 0.55
+  - 0.95
+  verification: Hydrostatics, parametric geometry and CAD exports.
+- id: GEO-B-001
+  name: Hull width
+  symbol: B_h
+  value: 0.09
+  unit: m
+  category: design
+  rationale: Maintains a slender hull envelope while retaining effective displacement volume.
+  basis: Volume, waterplane area and resistance trade study.
+  valid_range:
+  - 0.06
+  - 0.14
+  verification: Hydrostatics and resistance calculations.
+- id: GEO-S-001
+  name: Hull centre spacing
+  symbol: S
+  value: 0.36
+  unit: m
+  category: design
+  rationale: Provides transverse stability and a central collector corridor without excessive overall width.
+  basis: GM/freeboard parametric trade study.
+  valid_range:
+  - 0.28
+  - 0.5
+  verification: Stability trade space and candidate comparison.
+- id: GEO-H-001
+  name: Hull height
+  symbol: H
+  value: 0.16
+  unit: m
+  category: design
+  rationale: Provides positive freeboard under dry and full-payload design cases.
+  basis: Draft and freeboard calculation.
+  valid_range:
+  - 0.12
+  - 0.22
+  verification: Hydrostatic load cases.
+- id: HOP-V-001
+  name: Usable hopper volume
+  symbol: V_h
+  value: 4.0
+  unit: L
+  category: design
+  rationale: Represents the internal collection volume available after allowing for walls, inlet geometry and drainage
+    clearance.
+  basis: Conceptual central-basket geometry.
+  valid_range:
+  - 1.5
+  - 8.0
+  verification: Hopper loading envelope and mission storage ledger.
+- id: HOP-M-001
+  name: Payload mass limit
+  symbol: m_payload,max
+  value: 0.8
+  unit: kg
+  category: constraint
+  rationale: Conservative upper payload constraint below the hydrostatic/stability limit; protects freeboard and
+    controller assumptions.
+  basis: Mass, hydrostatics and stability trade studies.
+  valid_range:
+  - 0.3
+  - 1.2
+  verification: Hydrostatic load cases and stability envelope.
+- id: HOP-RHO-001
+  name: Equivalent retained-debris bulk density
+  symbol: rho_bulk
+  value: 75.0
+  unit: kg/m^3
+  category: scenario
+  rationale: A transparent equivalent-density surrogate for low-density mixed floating litter after drainage, not
+    a material property of any single waste type.
+  basis: Scenario assumption for converting captured mass to occupied hopper volume.
+  valid_range:
+  - 45.0
+  - 140.0
+  verification: Hopper capacity sensitivity study.
+- id: HOP-ETA-001
+  name: Hopper packing factor
+  symbol: eta_pack
+  value: 0.62
+  unit: '-'
+  category: scenario
+  rationale: Accounts for void fraction and inefficient packing of irregular floating objects.
+  basis: Conservative storage-efficiency assumption.
+  valid_range:
+  - 0.45
+  - 0.8
+  verification: Hopper capacity sensitivity study.
+- id: ENE-BAT-001
+  name: Battery capacity
+  symbol: C_bat
+  value: 5.0
+  unit: Ah
+  category: design
+  rationale: With 14.8 V nominal voltage and the usable-energy model, it supports the documented reference mission
+    while retaining a return reserve.
+  basis: Energy model and endurance trade study.
+  valid_range:
+  - 3.0
+  - 10.0
+  verification: SOC profiles and endurance envelope.
+- id: ENE-SOC-001
+  name: Reference initial state of charge
+  symbol: SOC_0
+  value: 0.8
+  unit: '-'
+  category: scenario
+  rationale: Starts below an ideal full-charge assumption while leaving sufficient energy for a long collection
+    mission and conservative return decision.
+  basis: Reference mission scenario.
+  valid_range:
+  - 0.45
+  - 1.0
+  verification: Energy-return logic and SOC time history.
+- id: PRO-V-001
+  name: Cruise speed
+  symbol: U_c
+  value: 0.28
+  unit: m/s
+  category: design
+  rationale: Selected below the upper propulsion capability to reduce power demand, turning load and tracking error
+    while preserving practical basin coverage.
+  basis: Resistance/propulsion and endurance trade studies.
+  valid_range:
+  - 0.18
+  - 0.45
+  verification: Propulsion operating envelope and closed-loop tracking.
+- id: ENV-J-001
+  name: Reference current vector
+  symbol: U_current
+  value:
+  - 0.0
+  - 0.0
+  unit: m/s
+  category: scenario
+  rationale: The reference case is calm water. Low-current and boundary-current cases are separate, explicitly labelled
+    validation scenarios.
+  basis: Validation scope definition.
+  valid_range:
+  - 0.0
+  - 0.15
+  verification: Current robustness study.
+- id: ENV-R-001
+  name: Robot safety radius
+  symbol: R_safe
+  value: 0.28
+  unit: m
+  category: control
+  rationale: Combines the physical half-width envelope, navigation uncertainty allowance and a finite clearance
+    margin.
+  basis: Configuration-space obstacle inflation.
+  valid_range:
+  - 0.2
+  - 0.45
+  verification: Occupancy grid, clearance history and safety-shield events.
+- id: ENV-D-001
+  name: Debris areal density
+  symbol: lambda_d
+  value: 0.08333333333333333
+  unit: items/m^2
+  category: scenario
+  rationale: The fixed reference mission uses eight deterministic debris items over a 96 m² basin so the vehicle
+    can demonstrate completed coverage before storage saturation. A denser 0.40 items/m² case is retained as a separate
+    hopper-capacity validation scenario.
+  basis: Scenario definition.
+  valid_range:
+  - 0.05
+  - 0.8
+  verification: Nominal coverage case and high-loading capacity-return case.
+- id: CTRL-DT-001
+  name: Integration time step
+  symbol: dt
+  value: 0.05
+  unit: s
+  category: numerical
+  rationale: Resolves the controller period and vessel yaw/surge dynamics while keeping long scenario execution
+    tractable.
+  basis: Numerical-stability and runtime trade-off.
+  valid_range:
+  - 0.02
+  - 0.1
+  verification: Time-step convergence check.
+- id: CTRL-LANE-001
+  name: Coverage lane spacing
+  symbol: d_lane
+  value: 0.9
+  unit: m
+  category: control
+  rationale: Selected to provide overlapping local debris-detection opportunities while limiting unnecessary U-turns
+    in a 12 m by 8 m basin.
+  basis: Coverage geometry and detector-range envelope.
+  valid_range:
+  - 0.6
+  - 1.2
+  verification: Coverage map and detection/capture efficiency.
+- id: CTRL-LOS-001
+  name: Guidance lookahead
+  symbol: L_LOS
+  value: 0.4
+  unit: m
+  category: control
+  rationale: A short lookahead limits corner cutting in the inflated occupancy map while avoiding stop-turn-go behaviour
+    at grid path nodes.
+  basis: Closed-loop calibration against target-convergence, no-watchdog-loop and clearance checks.
+  valid_range:
+  - 0.25
+  - 0.7
+  verification: Reference mission validation metrics and trajectory replay.
+- id: CTRL-CAP-001
+  name: Collection capture radius
+  symbol: R_cap
+  value: 0.45
+  unit: m
+  category: control
+  rationale: Accounts for the physical half-width envelope and conceptual collector inlet reach; avoids declaring
+    capture only at an impractically exact centre-point.
+  basis: Vehicle geometry, collector width and 3-DOF approach tracking envelope.
+  valid_range:
+  - 0.3
+  - 0.55
+  verification: Collection-event ledger and approach trajectory.
+- id: CTRL-HEAD-001
+  name: Heading proportional gain
+  symbol: K_psi
+  value: 0.1
+  unit: N·m/rad
+  category: control
+  rationale: Calibrated to prevent sustained target-orbit limit cycles while retaining sufficient yaw authority
+    for obstacle-route corners.
+  basis: Closed-loop reference mission calibration.
+  valid_range:
+  - 0.06
+  - 0.16
+  verification: Heading-error history, yaw-moment history and watchdog count.
+
+- id: CTRL-PIVOT-001
+  name: Pivot-entry heading error
+  symbol: e_psi,enter
+  value: 37.0
+  unit: deg
+  category: control
+  rationale: "A large heading mismatch is handled by a controlled stop-turn-go manoeuvre instead of forcing a moving hull through a sharp corner."
+  basis: "Closed-loop mission calibration against persistent-loop and clearance criteria."
+  valid_range: [25.0, 55.0]
+  verification: "Forward-tracking p95 error, safety-replan count and mission replay audit."
+
+- id: CTRL-PIVOT-002
+  name: Pivot-exit heading error
+  symbol: e_psi,exit
+  value: 11.5
+  unit: deg
+  category: control
+  rationale: "Hysteresis prevents rapid alternation between pivot and forward modes near a turn completion."
+  basis: "Stop-turn-go stability condition."
+  valid_range: [5.0, 20.0]
+  verification: "Control-regime transition log and replay audit."
+
+- id: CTRL-FORCE-001
+  name: Maximum forward tracking thrust
+  symbol: T_track,max
+  value: 1.60
+  unit: N
+  category: control
+  rationale: "Limits acceleration during map-constrained tracking while retaining margin below the twin-thruster capability used in manoeuvre studies."
+  basis: "3-DOF plant, resistance curve and command allocation constraints."
+  valid_range: [0.8, 2.5]
+  verification: "Logged thrust history, step-thrust response and mission force dashboard."
+
+- id: NAV-PLAN-001
+  name: Planner clearance margin beyond guard distance
+  symbol: Delta_c
+  value: 0.12
+  unit: m
+  category: control
+  rationale: "Inflates the global planning map beyond the numerical guard distance so path following has a tracking buffer before the safety supervisor is needed."
+  basis: "Configuration-space planning and closed-loop clearance audit."
+  valid_range: [0.05, 0.20]
+  verification: "Minimum-clearance history and safety-replan count."
+
+- id: SEN-R-001
+  name: Local debris-target activation range
+  symbol: R_detect
+  value: 0.90
+  unit: m
+  category: scenario
+  rationale: "Keeps the agent on its coverage route until an object is inside a local sensing/collection neighbourhood, avoiding global oracle target chasing."
+  basis: "Coverage geometry and deterministic scenario definition."
+  valid_range: [0.60, 1.40]
+  verification: "Target-confirmation events and mission path audit."
+- id: CTRL-CUR-001
+  name: Current-compensation gain
+  symbol: k_current
+  value: 1.0
+  unit: '-'
+  category: control
+  rationale: Uses the deterministic current vector in the digital twin to transform an earth-fixed ground-track request into a water-relative course command without changing the route geometry.
+  basis: Low-speed vector relation V_water = V_ground - k_current V_current.
+  valid_range:
+  - 0.0
+  - 1.0
+  verification: Current-aware operating-envelope dashboard, cross-current trajectory and crab-angle telemetry.
+- id: VAL-CUR-001
+  name: Validated current-magnitude limit
+  symbol: U_valid
+  value: 0.02
+  unit: m/s
+  category: validation
+  rationale: Bounds the low-current sheltered-basin scenarios that passed the deterministic coverage, clearance and docking contract; it is deliberately lower than the separately documented boundary observation.
+  basis: Versioned operating-envelope protocol and current-aware mission validation.
+  valid_range:
+  - 0.0
+  - 0.05
+  verification: Operating-envelope metrics table, accepted-scenario checks and boundary replay.

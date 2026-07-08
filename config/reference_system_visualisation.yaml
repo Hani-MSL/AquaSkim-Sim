@@ -1,0 +1,14 @@
+reference_system_visualisation:
+  identifier: AQUASKIM-REF-SYS-VIS-01
+  policy: >
+    Media use only logged deterministic 3-DOF system-scenario states. Boundary
+    and controlled-failure labels remain visible so that limitations are not
+    presented as validated operational claims. Titles exclude phase and patch labels.
+  render:
+    frames: 72
+    fps: 8
+    bitrate_kbps: 1300
+    contact_sheet_samples: 5
+    minimum_width_px: 1280
+    minimum_height_px: 720
+    expected_duration_s: 8.64

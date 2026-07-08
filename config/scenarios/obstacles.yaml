@@ -1,0 +1,18 @@
+scenario:
+  id: obstacles
+  title_fa: "مانع‌های ثابت و شناور"
+  duration_s: 900.0
+environment:
+  current_speed_mps: 0.08
+  current_direction_deg: 45.0
+  obstacles:
+    - {id: dock, type: rectangle, center_m: [5.8, 3.6], size_m: [1.20, 0.55]}
+    - {id: buoy_01, type: circle, center_m: [3.1, 5.9], radius_m: 0.22}
+    - {id: buoy_02, type: circle, center_m: [8.8, 2.1], radius_m: 0.22}
+  debris:
+    count: 24
+    mass_range_kg: [0.005, 0.040]
+    seed: 1103
+mission:
+  mode: coverage_then_collect
+  start_soc: 1.0

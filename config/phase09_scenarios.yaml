@@ -1,0 +1,66 @@
+phase: phase_09
+purpose: "Robustness validation of the Phase 08 closed-loop mission across deterministic scenarios and seeded Monte Carlo trials."
+quality_contract:
+  monte_carlo_trials: 20
+  current_speed_max_mps: 0.02
+  initial_soc_range: [0.31, 0.48]
+  required_success_rate: 0.95
+  minimum_clearance_m: 0.0
+  maximum_final_home_error_m: 0.30
+
+deterministic_scenarios:
+  - id: nominal_calm
+    title: "Nominal calm-water collection"
+    description: "Baseline Phase 08 mission: no current, two confirmed collections, normal initial battery state."
+    overrides:
+      autonomy:
+        current_earth_mps: [0.00, 0.00]
+        initial_soc: 0.42
+        max_collections: 2
+        mission_duration_s: 300.0
+        random_seed: 8026
+      environment_model:
+        debris:
+          seed: 7107
+
+  - id: cross_current
+    title: "Cross-current robustness"
+    description: "A lateral current challenges path following and heading feedback while all obstacle constraints remain active."
+    overrides:
+      autonomy:
+        current_earth_mps: [0.00, 0.02]
+        initial_soc: 0.42
+        max_collections: 2
+        mission_duration_s: 300.0
+        random_seed: 8026
+      environment_model:
+        debris:
+          seed: 7107
+
+  - id: low_energy_return
+    title: "Low-energy return-to-home"
+    description: "Lower initial SOC validates that the state machine preserves a return margin and completes the docking sequence."
+    overrides:
+      autonomy:
+        current_earth_mps: [-0.02, 0.00]
+        initial_soc: 0.31
+        max_collections: 2
+        mission_duration_s: 300.0
+        random_seed: 8026
+      environment_model:
+        debris:
+          seed: 7107
+
+  - id: diagonal_current
+    title: "Diagonal-current constrained mission"
+    description: "A mild diagonal current adds combined longitudinal and lateral disturbance within the controller calibration envelope."
+    overrides:
+      autonomy:
+        current_earth_mps: [0.014, -0.014]
+        initial_soc: 0.40
+        max_collections: 2
+        mission_duration_s: 300.0
+        random_seed: 8026
+      environment_model:
+        debris:
+          seed: 7107

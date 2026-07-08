@@ -1,0 +1,15 @@
+scenario:
+  id: lateral_current
+  title_fa: "جریان جانبی ملایم"
+  duration_s: 900.0
+environment:
+  current_speed_mps: 0.18
+  current_direction_deg: 90.0
+  obstacles: []
+  debris:
+    count: 18
+    mass_range_kg: [0.005, 0.030]
+    seed: 1102
+mission:
+  mode: coverage_then_collect
+  start_soc: 1.0

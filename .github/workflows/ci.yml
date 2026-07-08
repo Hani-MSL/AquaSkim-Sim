@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: environment.yml
+          activate-environment: aquaskim-sim
+          auto-activate-base: false
+
+      - name: Install package
+        shell: bash -l {0}
+        run: |
+          python -m pip install --editable . --no-build-isolation --no-deps
+
+      - name: Source and GitHub-readiness checks
+        shell: bash -l {0}
+        run: |
+          python -m aquaskim.integrity_audit report
+          python -m aquaskim.github_readiness
+          python -m aquaskim.rebuild_from_zero --dry-run
+
+      - name: Unit and contract tests
+        shell: bash -l {0}
+        run: |
+          python -m pytest -q

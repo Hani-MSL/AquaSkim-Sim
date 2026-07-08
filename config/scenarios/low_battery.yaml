@@ -1,0 +1,15 @@
+scenario:
+  id: low_battery
+  title_fa: "بازگشت خودکار به دلیل باتری کم"
+  duration_s: 900.0
+environment:
+  current_speed_mps: 0.10
+  current_direction_deg: 180.0
+  obstacles: []
+  debris:
+    count: 16
+    mass_range_kg: [0.005, 0.025]
+    seed: 1104
+mission:
+  mode: coverage_then_collect
+  start_soc: 0.31
