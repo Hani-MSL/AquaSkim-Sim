@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+<title id="title">Reference mission evidence</title>
+<desc id="desc">Schematic of the generated reference mission evidence pipeline.</desc>
+<rect width="900" height="560" rx="28" fill="#fffdf7"/>
+<text x="450" y="58" text-anchor="middle" font-family="Segoe UI, Arial" font-size="32" font-weight="700" fill="#2f2b1d">Reference Mission Evidence</text>
+<rect x="92" y="120" width="716" height="330" rx="24" fill="#eaf6ff" stroke="#2b6d8f" stroke-width="4"/>
+<path d="M140 380 C260 250, 320 280, 420 205 S610 150, 745 250" fill="none" stroke="#1f7a5c" stroke-width="10" stroke-linecap="round"/>
+<g fill="#f08a24" stroke="#7a4412" stroke-width="3">
+ <circle cx="260" cy="320" r="18"/><circle cx="390" cy="230" r="18"/><circle cx="545" cy="190" r="18"/><circle cx="690" cy="235" r="18"/>
+</g>
+<g fill="#1f4a5f">
+ <rect x="130" y="390" width="86" height="28" rx="8"/><rect x="720" y="125" width="54" height="80" rx="10"/>
+</g>
+<g font-family="Segoe UI, Arial" font-size="17" fill="#123047">
+ <text x="180" y="475" text-anchor="middle">Coverage lanes</text>
+ <text x="450" y="475" text-anchor="middle">Debris captures</text>
+ <text x="720" y="475" text-anchor="middle">Docking / return</text>
+</g>
+<g font-family="Segoe UI, Arial" font-size="16" fill="#123047">
+ <rect x="92" y="488" width="180" height="42" rx="12" fill="#e8f7ed" stroke="#49a167"/>
+ <text x="182" y="515" text-anchor="middle">100% nominal coverage</text>
+ <rect x="360" y="488" width="180" height="42" rx="12" fill="#eef0ff" stroke="#6574c4"/>
+ <text x="450" y="515" text-anchor="middle">capacity return</text>
+ <rect x="628" y="488" width="180" height="42" rx="12" fill="#fff4e5" stroke="#d88a23"/>
+ <text x="718" y="515" text-anchor="middle">bounded scenarios</text>
+</g>
+</svg>

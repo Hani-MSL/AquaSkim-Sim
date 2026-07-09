@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-"""Final delivery package builder for Patch 10.19.
+"""Final delivery package builder.
 
-This module packages the already validated Word report and curated evidence into
-an auditable ZIP. It intentionally does not run new simulations or create a
-certification/release-build claim.
+This module assembles the generated Word report, source tree, configuration,
+selected evidence, and reproducibility metadata into an auditable ZIP. It uses
+only the public final entrypoints, not internal development or patch scripts.
 """
 
 from dataclasses import dataclass
@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
-import shutil
 import sys
 import zipfile
 from typing import Any, Iterable
@@ -25,22 +24,38 @@ DELIVERY_IDENTIFIER = "AQUASKIM-FINAL-DELIVERY-01"
 PACKAGE_BASENAME = f"AquaSkim-Sim_Final_Delivery_v{__version__}"
 
 REQUIRED_REPRODUCTION_SCRIPTS = [
-    "scripts/run_patch_10_11_reference_fidelity.bat",
-    "scripts/run_patch_10_12_operating_envelope.bat",
-    "scripts/run_patch_10_13_control_robustness.bat",
-    "scripts/run_patch_10_13_1_control_hotfix.bat",
-    "scripts/run_patch_10_14_payload_maneuver_validation.bat",
-    "scripts/run_patch_10_15_system_scenario_validation.bat",
-    "scripts/run_patch_10_16_presentation_curation.bat",
-    "scripts/run_patch_10_17_engineering_release_gate.bat",
-    "scripts/run_patch_10_18_final_word_report.bat",
-    "scripts/run_patch_10_19_independent_rebuild_and_delivery.bat",
     "scripts/run_from_zero_to_delivery.bat",
+    "scripts/run_from_zero_to_delivery.sh",
+    "scripts/run_tests.bat",
 ]
+
+EXCLUDED_PARTS = {
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".git",
+    "patch_notes",
+    "patch_history",
+    "INCIDENTS",
+}
+
+EXCLUDED_PREFIXES = (
+    "outputs/deliverables/",
+    "config/user_profile.yaml",
+    "docs/patch_history/",
+    "docs/INCIDENTS/",
+    "patch_notes/",
+)
+
+EXCLUDED_NAME_PREFIXES = (
+    "PATCH_",
+    "run_patch_",
+)
 
 
 class FinalDeliveryError(RuntimeError):
-    """Raised when final delivery packaging cannot be certified."""
+    """Raised when final delivery packaging cannot be verified."""
 
 
 @dataclass(frozen=True)
@@ -62,7 +77,7 @@ def _sha256(path: Path) -> str:
 def _load_json(path: Path) -> dict[str, Any]:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except FileNotFoundError as exc:  # pragma: no cover - defensive clarity
+    except FileNotFoundError as exc:
         raise FinalDeliveryError(f"Required JSON is missing: {relative_to_root(path)}") from exc
     except json.JSONDecodeError as exc:
         raise FinalDeliveryError(f"Required JSON is invalid: {relative_to_root(path)}") from exc
@@ -89,18 +104,17 @@ def _iter_existing(patterns: Iterable[str], *, base: Path = PROJECT_ROOT) -> lis
 
 def _is_excluded(path: Path) -> bool:
     rel = relative_to_root(path)
-    parts = Path(rel).parts
-    if any(part in {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"} for part in parts):
+    parts = set(Path(rel).parts)
+    name = path.name
+    if parts & EXCLUDED_PARTS:
         return True
-    if rel.startswith("outputs/deliverables/"):
+    if rel.startswith(EXCLUDED_PREFIXES):
         return True
-    if rel.endswith(".pyc") or rel.endswith(".pyo"):
+    if name.startswith(EXCLUDED_NAME_PREFIXES):
         return True
-    if rel.startswith("config/user_profile.yaml"):
+    if name.lower().find("backup") >= 0:
         return True
-    if "backup" in path.name.lower():
-        return True
-    if path.suffix.lower() == ".zip" and rel.startswith("outputs/"):
+    if path.suffix.lower() in {".pyc", ".pyo", ".zip"} and rel.startswith("outputs/"):
         return True
     return False
 
@@ -158,19 +172,14 @@ def _validate_reproduction_script_set() -> list[dict[str, Any]]:
         if not exists or size <= 0:
             missing_or_empty.append(relative)
     if missing_or_empty:
-        raise FinalDeliveryError(
-            "Required reproduction scripts are missing or empty before delivery packaging: "
-            + json.dumps(missing_or_empty, ensure_ascii=False)
-        )
+        raise FinalDeliveryError("Required reproduction entrypoints are missing or empty: " + json.dumps(missing_or_empty, ensure_ascii=False))
     return rows
 
 
-
-
 def preflight_reproduction_scripts() -> list[dict[str, Any]]:
-    """Validate required reproduction scripts without assembling a delivery ZIP."""
+    """Validate final public reproduction entrypoints without assembling a ZIP."""
     rows = _validate_reproduction_script_set()
-    print("[OK] Reproduction scripts present and non-empty:")
+    print("[OK] Public reproduction entrypoints present and non-empty:")
     for row in rows:
         print(f"[OK] {row['path']} ({row['size_bytes']} bytes)")
     return rows
@@ -180,34 +189,31 @@ def _delivery_files() -> list[DeliveryFile]:
     files: list[DeliveryFile] = []
     add = files.append
 
-    # Top-level readable artifacts.
     add(DeliveryFile(DIRECTORIES["reports"] / "AquaSkim-Sim_Final_Report.docx", "AquaSkim-Sim_Final_Report.docx", "final_report"))
-    add(DeliveryFile(PROJECT_ROOT / "README.md", "README.md", "project_readme"))
-    add(DeliveryFile(PROJECT_ROOT / "README_FA.md", "README_FA.md", "project_readme"))
-    for name in ["pyproject.toml", "environment.yml"]:
+    for name in ["README_FA.md", "README.md", "pyproject.toml", "environment.yml", "LICENSE", "CITATION.cff"]:
         path = PROJECT_ROOT / name
         if path.exists():
-            add(DeliveryFile(path, name, "reproduction_metadata"))
+            add(DeliveryFile(path, name, "project_metadata"))
 
-    # Source, configuration, scripts, tests and documentation.
     for relative in REQUIRED_REPRODUCTION_SCRIPTS:
-        add(DeliveryFile(PROJECT_ROOT / relative, relative, "source_and_reproducibility"))
+        add(DeliveryFile(PROJECT_ROOT / relative, relative, "reproduction_entrypoint"))
 
     source_patterns = [
         "src/aquaskim/**/*.py",
         "config/**/*.yaml",
-        "config/report_metadata.json",
         "config/report_metadata.template.json",
         "scripts/*.bat",
+        "scripts/*.sh",
         "tests/*.py",
         "docs/**/*.md",
-        "PATCH_10_*_APPLY.md",
+        "assets/**/*.svg",
+        "cad/README.md",
+        "visuals/README.md",
     ]
     for path in _iter_existing(source_patterns):
         if not _is_excluded(path):
             add(DeliveryFile(path, relative_to_root(path), "source_and_reproducibility"))
 
-    # Reports and machine-readable audit outputs.
     output_patterns = [
         "outputs/reports/*.md",
         "outputs/reports/*.json",
@@ -222,19 +228,6 @@ def _delivery_files() -> list[DeliveryFile]:
         if not _is_excluded(path):
             add(DeliveryFile(path, relative_to_root(path), "validated_evidence"))
 
-    # Handoffs and the final evidence records are small but valuable for audit.
-    record_patterns = [
-        "records/handoffs/PHASE10_*.md",
-        "records/phases/phase_10_17/runs/**/*.json",
-        "records/phases/phase_10_17/runs/**/*.md",
-        "records/phases/phase_10_18/runs/**/*.json",
-        "records/phases/phase_10_18/runs/**/*.md",
-    ]
-    for path in _iter_existing(record_patterns):
-        if not _is_excluded(path):
-            add(DeliveryFile(path, relative_to_root(path), "audit_record"))
-
-    # Deduplicate by archive path, keeping the first role assignment.
     seen: set[str] = set()
     unique: list[DeliveryFile] = []
     for item in files:
@@ -247,12 +240,7 @@ def _delivery_files() -> list[DeliveryFile]:
 def _clean_previous_delivery_outputs() -> None:
     deliverables = DIRECTORIES["deliverables"]
     deliverables.mkdir(parents=True, exist_ok=True)
-    for pattern in (
-        "AquaSkim-Sim_Final_Delivery_v*.zip",
-        "FINAL_DELIVERY_PACKAGE_MANIFEST.json",
-        "FINAL_DELIVERY_SHA256SUMS.txt",
-        "final_delivery_package_audit.md",
-    ):
+    for pattern in ("AquaSkim-Sim_Final_Delivery_v*.zip", "FINAL_DELIVERY_PACKAGE_MANIFEST.json", "FINAL_DELIVERY_SHA256SUMS.txt", "final_delivery_package_audit.md"):
         for path in deliverables.glob(pattern):
             try:
                 path.unlink()
@@ -291,24 +279,18 @@ def build_final_delivery_package(*, record: bool = True) -> dict[str, Any]:
     for item in files:
         if item.required:
             _required(item.source, item.role)
-        file_rows.append({
-            "path": item.archive_path,
-            "source": relative_to_root(item.source),
-            "role": item.role,
-            "size_bytes": item.source.stat().st_size,
-            "sha256": _sha256(item.source),
-        })
+        file_rows.append({"path": item.archive_path, "source": relative_to_root(item.source), "role": item.role, "size_bytes": item.source.stat().st_size, "sha256": _sha256(item.source)})
 
     internal_manifest = {
         "identifier": DELIVERY_IDENTIFIER,
         "package_basename": PACKAGE_BASENAME,
         "project_version": __version__,
         "created_utc": datetime.now(timezone.utc).isoformat(),
-        "scope": "Final course-project delivery package assembled from the engineering-release-candidate Word report and curated reference evidence.",
+        "scope": "Final course-project delivery package assembled from reproducible source, the generated English Word report and curated reference evidence.",
         "model_boundary": "Numerical low-speed 3-DOF sheltered-basin evidence only; not sea-trial footage, certification, wave-response evidence or onboard current-estimation proof.",
         "final_report_sha256": prerequisites["report_sha256"],
         "prerequisite_checks": prerequisites["checks"],
-        "required_reproduction_scripts": reproduction_script_rows,
+        "required_reproduction_entrypoints": reproduction_script_rows,
         "explicit_non_claims": [
             "No sea-trial certification",
             "No wave-response validation",
@@ -318,15 +300,14 @@ def build_final_delivery_package(*, record: bool = True) -> dict[str, Any]:
         "files": file_rows,
     }
 
-    # Add the internal manifest/readme to the package via temporary files.
     temp_manifest = deliverables / "_DELIVERY_MANIFEST_IN_PACKAGE.json"
     temp_readme = deliverables / "_DELIVERY_README_IN_PACKAGE.md"
     temp_manifest.write_text(json.dumps(internal_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     temp_readme.write_text(
         "# AquaSkim-Sim final delivery package\n\n"
         f"- Project version: `{__version__}`\n"
-        f"- Final report: `AquaSkim-Sim_Final_Report.docx`\n"
-        "- Evidence source: curated fixed-reference outputs after Engineering Release Gate.\n"
+        "- Final report: `AquaSkim-Sim_Final_Report.docx`\n"
+        "- Evidence source: generated and curated fixed-reference outputs.\n"
         "- Boundary: low-speed 3-DOF sheltered-basin numerical model only.\n"
         "- This package does not claim sea-trial validation, wave-response validation or certification.\n",
         encoding="utf-8",
@@ -348,38 +329,16 @@ def build_final_delivery_package(*, record: bool = True) -> dict[str, Any]:
     if not verification["passed"]:
         raise FinalDeliveryError(f"Delivery ZIP verification failed: {json.dumps(verification, ensure_ascii=False)}")
 
-    external_manifest = {
-        **internal_manifest,
-        "package_zip": relative_to_root(package_zip),
-        "package_sha256": zip_sha,
-        "package_size_bytes": zip_size,
-        "zip_verification": verification,
-        "release_status": "DELIVERY_PACKAGE_READY",
-    }
+    external_manifest = {**internal_manifest, "package_zip": relative_to_root(package_zip), "package_sha256": zip_sha, "package_size_bytes": zip_size, "zip_verification": verification, "release_status": "DELIVERY_PACKAGE_READY"}
     external_manifest_path.write_text(json.dumps(external_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    sums_lines = [f"{zip_sha}  {package_zip.name}"]
-    for row in file_rows:
-        sums_lines.append(f"{row['sha256']}  {row['path']}")
-    sums_path.write_text("\n".join(sums_lines) + "\n", encoding="utf-8")
-
+    sums_path.write_text("\n".join([f"{zip_sha}  {package_zip.name}"] + [f"{row['sha256']}  {row['path']}" for row in file_rows]) + "\n", encoding="utf-8")
     audit_md = _audit_markdown(external_manifest)
     audit_md_path.write_text(audit_md, encoding="utf-8")
-
     if record:
         _record_run(external_manifest, audit_md)
 
-    return {
-        "package_zip": relative_to_root(package_zip),
-        "package_sha256": zip_sha,
-        "package_size_bytes": zip_size,
-        "manifest": relative_to_root(external_manifest_path),
-        "sha256sums": relative_to_root(sums_path),
-        "audit_report": relative_to_root(audit_md_path),
-        "file_count": len(file_rows),
-        "status": "PASS",
-        "release_status": "DELIVERY_PACKAGE_READY",
-    }
+    return {"package_zip": relative_to_root(package_zip), "package_sha256": zip_sha, "package_size_bytes": zip_size, "manifest": relative_to_root(external_manifest_path), "sha256sums": relative_to_root(sums_path), "audit_report": relative_to_root(audit_md_path), "file_count": len(file_rows), "status": "PASS", "release_status": "DELIVERY_PACKAGE_READY"}
 
 
 def _verify_package(package_zip: Path, file_rows: list[dict[str, Any]]) -> dict[str, Any]:
@@ -393,10 +352,10 @@ def _verify_package(package_zip: Path, file_rows: list[dict[str, Any]]) -> dict[
             if path not in names:
                 mismatches.append({"path": path, "issue": "missing"})
                 continue
-            digest = hashlib.sha256(archive.read(path)).hexdigest()
-            if digest != sha:
-                mismatches.append({"path": path, "issue": "sha256_mismatch", "expected": sha, "actual": digest})
-        forbidden = [name for name in names if "backup" in Path(name).name.lower() or name.endswith(".pyc") or "__pycache__" in name]
+            actual = hashlib.sha256(archive.read(path)).hexdigest()
+            if actual != sha:
+                mismatches.append({"path": path, "issue": "sha256_mismatch", "expected": sha, "actual": actual})
+        forbidden = [name for name in names if "backup" in Path(name).name.lower() or name.endswith(".pyc") or "__pycache__" in name or "run_patch_" in name or "/PATCH_" in name or "patch_notes" in name or "INCIDENT" in name]
     checks = {
         "zip_exists": package_zip.exists(),
         "zip_size_gt_5mb": package_zip.stat().st_size > 5_000_000,
@@ -405,13 +364,7 @@ def _verify_package(package_zip: Path, file_rows: list[dict[str, Any]]) -> dict[
         "all_listed_files_present_and_hash_match": not mismatches,
         "no_forbidden_files": not forbidden,
     }
-    return {
-        "passed": all(checks.values()),
-        "checks": checks,
-        "mismatches": mismatches,
-        "forbidden_entries": forbidden,
-        "archive_file_count": len(names),
-    }
+    return {"passed": all(checks.values()), "checks": checks, "mismatches": mismatches, "forbidden_entries": forbidden, "archive_file_count": len(names)}
 
 
 def _audit_markdown(manifest: dict[str, Any]) -> str:
@@ -430,29 +383,20 @@ def _audit_markdown(manifest: dict[str, Any]) -> str:
     ]
     for name, value in checks.items():
         lines.append(f"- **{name}**: `{value}`")
-    lines.extend([
-        "",
-        "## Scope",
-        manifest["scope"],
-        "",
-        "## Model boundary",
-        manifest["model_boundary"],
-        "",
-        "## Explicit non-claims",
-    ])
+    lines.extend(["", "## Scope", manifest["scope"], "", "## Model boundary", manifest["model_boundary"], "", "## Explicit non-claims"])
     for claim in manifest["explicit_non_claims"]:
         lines.append(f"- {claim}")
     return "\n".join(lines) + "\n"
 
 
 def _record_run(manifest: dict[str, Any], audit_md: str) -> None:
-    run_id = "phase10_19_" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = "delivery_" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     runs = DIRECTORIES["phase10_19_runs"]
     run_dir = runs / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "FINAL_DELIVERY_PACKAGE_MANIFEST.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     (run_dir / "final_delivery_package_audit.md").write_text(audit_md, encoding="utf-8")
-    handoff = DIRECTORIES["handoffs"] / "PHASE10_19_LATEST_HANDOFF.md"
+    handoff = DIRECTORIES["handoffs"] / "FINAL_DELIVERY_LATEST_HANDOFF.md"
     handoff.write_text(
         "# Final Delivery Package\n\n"
         f"- Run: `{run_id}`\n"
@@ -481,7 +425,7 @@ def print_delivery_summary(result: dict[str, Any]) -> None:
     print("========================================================================")
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     if "--preflight-scripts" in sys.argv[1:]:
         preflight_reproduction_scripts()
     else:
