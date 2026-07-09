@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+<title id="title">Validation summary</title>
+<desc id="desc">Summary cards for the final reproducible AquaSkim-Sim validation workflow.</desc>
+<rect width="900" height="560" rx="28" fill="#f8fbf7"/>
+<text x="450" y="60" text-anchor="middle" font-family="Segoe UI, Arial" font-size="32" font-weight="700" fill="#1d3526">Validation Summary</text>
+<g font-family="Segoe UI, Arial" fill="#17324a">
+ <rect x="80" y="120" width="220" height="126" rx="22" fill="#e8f7ed" stroke="#49a167" stroke-width="4"/>
+ <text x="190" y="162" text-anchor="middle" font-size="22" font-weight="700">Hydrostatics</text>
+ <text x="190" y="198" text-anchor="middle" font-size="17">GM and freeboard</text>
+ <text x="190" y="225" text-anchor="middle" font-size="17">payload stability</text>
+ <rect x="340" y="120" width="220" height="126" rx="22" fill="#eaf6ff" stroke="#2b6d8f" stroke-width="4"/>
+ <text x="450" y="162" text-anchor="middle" font-size="22" font-weight="700">Dynamics</text>
+ <text x="450" y="198" text-anchor="middle" font-size="17">low-speed 3-DOF</text>
+ <text x="450" y="225" text-anchor="middle" font-size="17">current-aware guidance</text>
+ <rect x="600" y="120" width="220" height="126" rx="22" fill="#fff4e5" stroke="#d88a23" stroke-width="4"/>
+ <text x="710" y="162" text-anchor="middle" font-size="22" font-weight="700">Evidence</text>
+ <text x="710" y="198" text-anchor="middle" font-size="17">figures, GIF, MP4</text>
+ <text x="710" y="225" text-anchor="middle" font-size="17">Word + ZIP package</text>
+</g>
+<g transform="translate(110 320)" font-family="Segoe UI, Arial" font-size="17" fill="#123047">
+ <rect x="0" y="0" width="680" height="54" rx="16" fill="#ffffff" stroke="#9ab"/>
+ <rect x="0" y="0" width="620" height="54" rx="16" fill="#4fb3d3" opacity="0.75"/>
+ <text x="20" y="35">Full regression, visual QA and manifest checks</text>
+ <rect x="0" y="82" width="680" height="54" rx="16" fill="#ffffff" stroke="#9ab"/>
+ <rect x="0" y="82" width="650" height="54" rx="16" fill="#49a167" opacity="0.75"/>
+ <text x="20" y="117">One-command rebuild creates a fresh outputs/ tree</text>
+ <rect x="0" y="164" width="680" height="54" rx="16" fill="#ffffff" stroke="#9ab"/>
+ <rect x="0" y="164" width="520" height="54" rx="16" fill="#d88a23" opacity="0.75"/>
+ <text x="20" y="199">Explicit model boundary and non-claims retained</text>
+</g>
+</svg>
