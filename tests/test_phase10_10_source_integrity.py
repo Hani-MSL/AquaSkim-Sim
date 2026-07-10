@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 from aquaskim.integrity_audit import (
     audit_imports,
     audit_reference_isolation,
@@ -9,8 +7,8 @@ from aquaskim.integrity_audit import (
     audit_yaml_parse,
 )
 from aquaskim.legacy_registry import legacy_module_names
-from aquaskim.paths import PROJECT_ROOT
 from aquaskim.phase02 import run_phase02
+from aquaskim.rebuild_from_zero import _steps
 
 
 def test_phase02_is_reconstructed_from_shared_design_configuration() -> None:
@@ -36,13 +34,14 @@ def test_lightweight_audits_pass_without_rendering_media_or_delivery() -> None:
     assert audit_release_disabled()["passed"]
 
 
-def test_release_scripts_are_explicitly_disabled() -> None:
-    for filename in ("run_patch_10.bat", "run_final_reproducible_build.bat", "open_final_deliverables.bat"):
-        text = (PROJECT_ROOT / "scripts" / filename).read_text(encoding="utf-8").lower()
-        assert "release build disabled" in text or "final delivery disabled" in text
+def test_public_entrypoints_are_present_and_free_of_internal_workflow_markers() -> None:
+    result = audit_release_disabled()
+    assert result["name"] == "public_entrypoints"
+    assert result["passed"]
+    assert all(row["exists"] and row["public_entrypoint"] for row in result["scripts"])
 
 
-def test_reference_build_runs_integrity_before_reference_media_generation() -> None:
-    text = (PROJECT_ROOT / "scripts" / "build_reference_project.bat").read_text(encoding="utf-8").lower()
-    assert "run_patch_10_10_source_integrity" in text
-    assert text.index("run_patch_10_10_source_integrity") < text.index("run_patch_10_9")
+def test_rebuild_runs_source_audit_before_generation_steps() -> None:
+    names = [step.name for step in _steps()]
+    assert names[:2] == ["clean", "source-audit"]
+    assert names[-2:] == ["phase10-18", "phase10-19"]
