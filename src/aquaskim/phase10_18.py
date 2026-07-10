@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Patch 10.18 facade for final Word report generation and QA."""
+"""Facade for final Word report generation and quality assurance."""
 
 from typing import Any
 
