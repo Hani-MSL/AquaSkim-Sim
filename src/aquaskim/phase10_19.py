@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Patch 10.19 facade for final delivery packaging."""
+"""Facade for final delivery-package assembly and verification."""
 
 from typing import Any
 
