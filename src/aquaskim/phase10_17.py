@@ -1,4 +1,4 @@
-"""Patch 10.17 facade for the engineering release-candidate gate."""
+"""Facade for the engineering release-candidate gate."""
 from __future__ import annotations
 
 from pathlib import Path
