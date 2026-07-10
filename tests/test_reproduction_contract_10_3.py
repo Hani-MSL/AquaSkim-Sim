@@ -1,11 +1,18 @@
 from aquaskim.paths import PROJECT_ROOT
 
 
-def test_interactive_reproduction_entrypoint_uses_configured_build() -> None:
-    script = (PROJECT_ROOT / "scripts" / "configure_and_build.bat").read_text(encoding="utf-8").lower()
-    assert "run-configured-build" in script
-    assert "python -m aquaskim.cli configure" in script
+def test_reproduction_entrypoint_uses_fixed_reference_rebuild() -> None:
+    script = (PROJECT_ROOT / "scripts" / "run_from_zero_to_delivery.bat").read_text(
+        encoding="utf-8"
+    ).lower()
+    assert "python -m aquaskim.rebuild_from_zero" in script
+    assert "environment.yml" in script
+    assert "run_patch_" not in script
 
 
-def test_release_quality_documentation_exists() -> None:
-    assert (PROJECT_ROOT / "docs" / "phases" / "phase_10_3" / "03_RELEASE_GATE.md").exists()
+def test_public_modelling_and_validation_documentation_exists() -> None:
+    document = PROJECT_ROOT / "docs" / "MODELING_AND_VALIDATION.md"
+    assert document.exists()
+    text = document.read_text(encoding="utf-8")
+    assert "Low-speed dynamics" in text
+    assert "Validation strategy" in text
