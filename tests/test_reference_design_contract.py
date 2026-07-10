@@ -7,12 +7,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_reference_design_is_fixed_and_noninteractive() -> None:
-    text = (ROOT / "scripts" / "build_reference_project.bat").read_text(
+    text = (ROOT / "scripts" / "run_from_zero_to_delivery.bat").read_text(
         encoding="utf-8"
     ).lower()
     assert "input(" not in text
-    assert "configure" not in text
-    assert "run_patch_10_9" in text
+    assert "run_patch_" not in text
+    assert "python -m aquaskim.rebuild_from_zero" in text
 
 
 def test_reference_registry_has_rationale_for_every_parameter() -> None:

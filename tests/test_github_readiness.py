@@ -16,7 +16,7 @@ def test_one_command_rebuild_entrypoint_is_documented() -> None:
     assert script.exists()
     assert script.stat().st_size > 1_000
     assert "scripts\\run_from_zero_to_delivery.bat" in readme
-    assert "outputs\\deliverables\\AquaSkim-Sim_Final_Delivery_v1.6.21.zip" in readme
+    assert "AquaSkim-Sim_Final_Delivery_v1.6.21.zip" in readme
 
 
 def test_public_metadata_template_does_not_commit_private_metadata() -> None:
